@@ -10,14 +10,18 @@ public class BilanzOdsReader {
     public static void main(String[] args) {
         try {
             OdfSpreadsheetDocument document = OdfSpreadsheetDocument.loadDocument(new File("/tmp/example.ods"));
-            OdfTable table = document.getTableByName("Ausgaben"); // Change to your sheet name
-            for (int row = 0; row < table.getRowCount(); row++) {
+            OdfTable table = document.getTableByName("Ausgaben");
+            System.out.println(table.getRowCount() + " lines to read");
+
+            for (int row = 0; row < 10 /*table.getRowCount() */; row++) {
                 for (int col = 0; col < table.getColumnCount(); col++) {
                     OdfTableCell cell = table.getCellByPosition(col, row);
                     System.out.print(cell.getStringValue() + "\t");
                 }
                 System.out.println();
             }
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }
