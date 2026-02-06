@@ -28,32 +28,35 @@ public class BilanzOdsReader {
     public List<BilanzRow> getRows() throws IOException {
         try {
             OdfTable table = readTable();
-            System.out.println("Zeilen: " + table.getRowCount());
+            // ODS default is 1048576 albeit it's only empty rows
+            System.out.println("Row count: " + table.getRowCount());
 
             List<BilanzRow> rows = new ArrayList<>();
             AtomicInteger counter = new AtomicInteger(0);
+            AtomicInteger readRows = new AtomicInteger(0);
 
-            emptyRow:
-            for (int row = 0; row < table.getRowCount(); row++) {
-                // only allow 3 empty rows in a row
-                if (counter.get() == 3) {
-                    System.out.println("ABBRUCH");
+            for (int rowCount = 0; rowCount < table.getRowCount(); rowCount++) {
+                OdfTableRow row = table.getRowByIndex(rowCount);
+
+                // only allow 5 empty rows in a row
+                if (counter.get() == 5) {
+                    System.out.println("STOPPING due to too many empty lines after having read " + readRows.get() + " non-empty rows.");
                     break;
                 }
-                for (int col = 0; col < table.getColumnCount(); col++) {
-                    OdfTableCell cell = table.getCellByPosition(col, row);
-                    if (cell.getStringValue().isEmpty()) {
-                        counter.incrementAndGet();
-                        break emptyRow;
-                    } else {
-                        System.out.println("RESET");
-                        counter.set(0);
-                    }
-                    System.out.print(cell.getStringValue() + "\t");
-                }
-                System.out.println();
-            }
 
+                OdfTableCell cell = row.getCellByIndex(0);
+                if (cell.getStringValue().isEmpty()) {
+                    counter.incrementAndGet();
+                    // skip empty rows
+                } else {
+                    counter.set(0);
+                    System.out.println("Reading " + readRows.incrementAndGet() + " row.....");
+
+                    Optional<BilanzRow> br = fromOdfTableRow(row);
+                    br.ifPresent(rows::add);
+                }
+            }
+            System.out.println("RROWS: " + rows.size());
             return rows;
         } catch (Exception e) {
             throw new IOException(e);
@@ -66,6 +69,9 @@ public class BilanzOdsReader {
             bilanzRow.setDate(LocalDateTime.parse(row.getCellByIndex(0).getStringValue()));
             bilanzRow.setAmount(new BigDecimal(row.getCellByIndex(1).getStringValue()));
             bilanzRow.setDescription(row.getCellByIndex(2).getStringValue());
+
+            System.out.println("Extracted: " + bilanzRow);
+
             return Optional.of(bilanzRow);
         } catch (Exception e) {
             return Optional.empty();
