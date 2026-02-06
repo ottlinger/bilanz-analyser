@@ -12,7 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Path;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,15 +25,16 @@ public class BilanzOdsReader {
     private String tableName;
     private Path source;
 
-    public List<BilanzRow> getRows() throws IOException {
+    public List<BilanzRow> extractData() throws IOException {
         try {
             OdfTable table = readTable();
             // ODS default is 1048576 albeit it's only empty rows
-            System.out.println("Row count: " + table.getRowCount());
+            System.out.println("Table '" + this.tableName + "' has " + table.getRowCount() + " rows");
 
             List<BilanzRow> rows = new ArrayList<>();
             AtomicInteger counter = new AtomicInteger(0);
             AtomicInteger readRows = new AtomicInteger(0);
+            AtomicInteger rowsWithParsingErrors = new AtomicInteger(0);
 
             for (int rowCount = 0; rowCount < table.getRowCount(); rowCount++) {
                 OdfTableRow row = table.getRowByIndex(rowCount);
@@ -50,13 +51,18 @@ public class BilanzOdsReader {
                     // skip empty rows
                 } else {
                     counter.set(0);
-                    System.out.println("Reading " + readRows.incrementAndGet() + " row.....");
+                    readRows.incrementAndGet();
 
                     Optional<BilanzRow> br = fromOdfTableRow(row);
-                    br.ifPresent(rows::add);
+                    if (br.isPresent()) {
+                        rows.add(br.get());
+                    } else {
+                        rowsWithParsingErrors.incrementAndGet();
+                    }
                 }
             }
-            System.out.println("RROWS: " + rows.size());
+
+            System.out.println("Extracted " + rows.size() + " rows successfully, while skipping " + rowsWithParsingErrors.get() + " not well formatted rows.");
             return rows;
         } catch (Exception e) {
             throw new IOException(e);
@@ -66,16 +72,30 @@ public class BilanzOdsReader {
     private static Optional<BilanzRow> fromOdfTableRow(OdfTableRow row) {
         try {
             BilanzRow bilanzRow = new BilanzRow();
-            bilanzRow.setDate(LocalDateTime.parse(row.getCellByIndex(0).getStringValue()));
-            bilanzRow.setAmount(new BigDecimal(row.getCellByIndex(1).getStringValue()));
+            // expected format: yyyy-MM-dd
+            bilanzRow.setDate(LocalDate.parse(row.getCellByIndex(0).getStringValue()));
+            // remove trailing spaces and currency symbol
+            bilanzRow.setAmount(new BigDecimal(cleanUpAmount(row.getCellByIndex(1).getStringValue())));
             bilanzRow.setDescription(row.getCellByIndex(2).getStringValue());
-
-            System.out.println("Extracted: " + bilanzRow);
 
             return Optional.of(bilanzRow);
         } catch (Exception e) {
+            System.err.println("Skipping row due to: " + e.getMessage());
             return Optional.empty();
         }
+    }
+
+    /**
+     * Removes currency symbol, changes <code>,</code> to <code>.</code> and trims the given amount value from an ODS file.
+     *
+     * @param amount given amount, e.g. 1,23 €
+     * @return trimmed amount in order to be parseable as a numeric.
+     */
+    private static String cleanUpAmount(String amount) {
+        if (amount != null && !amount.isEmpty()) {
+            return amount.replaceAll("€", "").replaceAll(",", ".").trim();
+        }
+        return amount;
     }
 
     private OdfTable readTable() throws Exception {
@@ -102,6 +122,4 @@ public class BilanzOdsReader {
             e.printStackTrace();
         }
     }
-
-
 }
