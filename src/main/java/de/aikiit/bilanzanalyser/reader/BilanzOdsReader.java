@@ -29,7 +29,7 @@ public class BilanzOdsReader {
         try {
             OdfTable table = readTable();
             // ODS default is 1048576 albeit it's only empty rows
-            System.out.println("Table '" + this.tableName + "' has " + table.getRowCount() + " rows");
+            System.out.println("Given table '" + this.tableName + "' has " + table.getRowCount() + " rows");
 
             List<BilanzRow> rows = new ArrayList<>();
             AtomicInteger counter = new AtomicInteger(0);
