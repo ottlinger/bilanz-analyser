@@ -1,12 +1,22 @@
 package de.aikiit.bilanzanalyser.reader;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.odftoolkit.odfdom.doc.OdfSpreadsheetDocument;
 import org.odftoolkit.odfdom.doc.table.OdfTable;
 import org.odftoolkit.odfdom.doc.table.OdfTableCell;
 
 import java.io.File;
+import java.nio.file.Path;
 
+@Data
+@AllArgsConstructor
 public class BilanzOdsReader {
+
+    private String tableName;
+    private Path source;
+
     public static void main(String[] args) {
         try {
             OdfSpreadsheetDocument document = OdfSpreadsheetDocument.loadDocument(new File("/tmp/example.ods"));
@@ -21,10 +31,11 @@ public class BilanzOdsReader {
                 System.out.println();
             }
 
-
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+
 
 }
