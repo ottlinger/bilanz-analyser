@@ -17,11 +17,13 @@ class BilanzOdsReaderTest {
     private Resource resource;
 
     @Test
-    void createReader() throws Exception {
+    void createAndReadExampleData() throws Exception {
         BilanzOdsReader reader = new BilanzOdsReader("Ausgaben", Paths.get(resource.getURI()));
         assertNotNull(reader);
         assertThat(reader.getSource()).hasFileName("example-ausgaben.ods");
         assertThat(reader.getTableName()).isEqualTo("Ausgaben");
+
+        assertThat(reader.getRows()).isEmpty();
     }
 
 }
