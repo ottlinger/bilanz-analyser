@@ -25,6 +25,12 @@ public class BilanzOdsReader {
     private String tableName;
     private Path source;
 
+    /**
+     * Parses the given tableName in the configured ODS file.
+     *
+     * @return list of {@link BilanzRow} rows.
+     * @throws IOException in case of general I/O errors as parsing errors are transformed into skipped rows.
+     */
     public List<BilanzRow> extractData() throws IOException {
         try {
             OdfTable table = readTable();
