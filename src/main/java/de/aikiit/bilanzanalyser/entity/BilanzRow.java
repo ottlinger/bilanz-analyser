@@ -12,4 +12,7 @@ public class BilanzRow {
     private LocalDate date;
     private BigDecimal amount;
     private String description;
+    private String shop;
+    private String payment;
+    private String category;
 }
