@@ -10,13 +10,13 @@ import org.odftoolkit.odfdom.doc.table.OdfTableRow;
 
 import java.io.File;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.nio.file.Path;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static de.aikiit.bilanzanalyser.reader.BilanzRowParser.fromOdfTableRow;
 
 @Data
 @AllArgsConstructor
@@ -73,35 +73,6 @@ public class BilanzOdsReader {
         } catch (Exception e) {
             throw new IOException(e);
         }
-    }
-
-    private static Optional<BilanzRow> fromOdfTableRow(OdfTableRow row) {
-        try {
-            BilanzRow bilanzRow = new BilanzRow();
-            // expected format: yyyy-MM-dd
-            bilanzRow.setDate(LocalDate.parse(row.getCellByIndex(0).getStringValue()));
-            // remove trailing spaces and currency symbol
-            bilanzRow.setAmount(new BigDecimal(cleanUpAmount(row.getCellByIndex(1).getStringValue())));
-            bilanzRow.setDescription(row.getCellByIndex(2).getStringValue());
-
-            return Optional.of(bilanzRow);
-        } catch (Exception e) {
-            System.err.println("Skipping row due to: " + e.getMessage());
-            return Optional.empty();
-        }
-    }
-
-    /**
-     * Removes currency symbol, changes <code>,</code> to <code>.</code> and trims the given amount value from an ODS file.
-     *
-     * @param amount given amount, e.g. 1,23 €
-     * @return trimmed amount in order to be parseable as a numeric.
-     */
-    private static String cleanUpAmount(String amount) {
-        if (amount != null && !amount.isEmpty()) {
-            return amount.replaceAll("€", "").replaceAll(",", ".").trim();
-        }
-        return amount;
     }
 
     private OdfTable readTable() throws Exception {
