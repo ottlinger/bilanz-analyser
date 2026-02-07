@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.odftoolkit.odfdom.doc.OdfDocument;
 import org.odftoolkit.odfdom.doc.OdfSpreadsheetDocument;
 import org.odftoolkit.odfdom.doc.table.OdfTable;
+import org.odftoolkit.odfdom.doc.table.OdfTableCell;
 import org.odftoolkit.odfdom.doc.table.OdfTableRow;
 
 import java.util.Optional;
@@ -24,7 +25,13 @@ class BilanzRowParserTest {
         try (OdfDocument document = OdfSpreadsheetDocument.newSpreadsheetDocument()) {
             final Optional<OdfTable> first = document.getTableList(true).stream().findFirst();
             if (first.isPresent()) {
-                return first.get().appendRow();
+                OdfTable t = first.get();
+                for (int i = 0; i < 5; i++) {
+                    OdfTableRow row = t.appendRow();
+                    /*for (int j = 0; j < 3; j++) {
+                        OdfTableCell cell = row.addCell("Cell " + (i + 1) + "," + (j + 1));
+                    }*/
+                }
             }
         }
         throw new IllegalArgumentException("No table found");
