@@ -4,9 +4,9 @@ import org.junit.jupiter.api.Test;
 import org.odftoolkit.odfdom.doc.OdfDocument;
 import org.odftoolkit.odfdom.doc.OdfSpreadsheetDocument;
 import org.odftoolkit.odfdom.doc.table.OdfTable;
-import org.odftoolkit.odfdom.doc.table.OdfTableCell;
 import org.odftoolkit.odfdom.doc.table.OdfTableRow;
 
+import java.util.List;
 import java.util.Optional;
 
 import static de.aikiit.bilanzanalyser.reader.BilanzRowParser.cleanUpAmount;
@@ -26,12 +26,13 @@ class BilanzRowParserTest {
             final Optional<OdfTable> first = document.getTableList(true).stream().findFirst();
             if (first.isPresent()) {
                 OdfTable t = first.get();
-                for (int i = 0; i < 5; i++) {
-                    OdfTableRow row = t.appendRow();
-                    /*for (int j = 0; j < 3; j++) {
-                        OdfTableCell cell = row.addCell("Cell " + (i + 1) + "," + (j + 1));
-                    }*/
-                }
+                List<OdfTableRow> newRows = t.appendRows(5);
+                newRows.get(0).getCellByIndex(0).setStringValue("2025-10-02");
+                newRows.get(0).getCellByIndex(1).setStringValue("2,34 €");
+                newRows.get(0).getCellByIndex(2).setStringValue("Just a test row");
+                newRows.get(0).getCellByIndex(3).setStringValue("ReWe");
+                newRows.get(0).getCellByIndex(4).setStringValue("EC");
+                newRows.get(0).getCellByIndex(4).setStringValue("Lebensmittel");
             }
         }
         throw new IllegalArgumentException("No table found");
