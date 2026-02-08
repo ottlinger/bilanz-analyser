@@ -4,3 +4,16 @@ Helper to analyze the local Bilanz
 [![GitHub Action master branch status](https://github.com/ottlinger/bilanz-analyser/actions/workflows/maven.yml/badge.svg?branch=main)](https://github.com/ottlinger/bilanz-analyser/actions)
 [![AGPL v3.0](https://img.shields.io/github/license/ottlinger/bilanz-analyser.svg)](https://www.gnu.org/licenses/agpl-3.0.en.html)
 
+## Abstract
+
+I do have a highly-customized ODS/spreadsheet with my personal balance sheet. 
+
+It contains a bunch of tables with certain logics. One of them is called Ausgaben/spending and its data is supposed to be visualised with this application.
+
+# Roadmap
+
+1. ☑️ Process an ODS file and parse its rows - issue #3
+2. Upload an ODS file via a webform for data analysis
+3. Load and extract its data into an in-memory-database (h2)
+4. Perform data visualisation on this database to allow drilldowns and lists in various dimensions
+
