@@ -28,12 +28,12 @@ class BilanzRowParserTest {
 
     private static OdfTableRow createExampleRow() throws Exception {
         try (OdfDocument document = OdfSpreadsheetDocument.newSpreadsheetDocument()) {
-            OdfTable t = OdfTable.newTable(document, 5, 7);
+            OdfTable t = OdfTable.newTable(document, 5, 6);
             t.setTableName("Ausgaben");
             assertThat(t.getRowCount()).isEqualTo(5);
 
             OdfTableRow newRow = t.getRowByIndex(0);
-            assertThat(newRow.getCellCount()).isEqualTo(7);
+            assertThat(newRow.getCellCount()).isEqualTo(6);
 
             for (int i = 0; i < newRow.getCellCount(); i++) {
                 assertThat(newRow.getCellByIndex(0)).isNotNull();
