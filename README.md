@@ -12,7 +12,7 @@ It contains a bunch of tables with certain logics. One of them is called Ausgabe
 
 # Roadmap
 
-1. ☑️ Process an ODS file and parse its rows - see issue [#3](/issues/3)
+1. ☑️ Process an ODS file and parse its rows - see issue [#3](issues/3)
 2. Upload an ODS file via a webform for data analysis
 3. Load and extract its data into an in-memory-database (h2)
 4. Perform data visualisation on this database to allow drilldowns and lists in various dimensions
