@@ -14,15 +14,15 @@ public class BilanzRowParser {
 
     public static Optional<BilanzRow> fromOdfTableRow(OdfTableRow row) {
         try {
-            BilanzRow bilanzRow = new BilanzRow();
-            // expected format: yyyy-MM-dd
-            bilanzRow.setDate(LocalDate.parse(row.getCellByIndex(0).getStringValue()));
-            // remove trailing spaces and currency symbol
-            bilanzRow.setAmount(new BigDecimal(cleanUpAmount(row.getCellByIndex(1).getStringValue())));
-            bilanzRow.setDescription(row.getCellByIndex(2).getStringValue());
-            bilanzRow.setShop(row.getCellByIndex(3).getStringValue());
-            bilanzRow.setPayment(row.getCellByIndex(4).getStringValue());
-            bilanzRow.setCategory(row.getCellByIndex(5).getStringValue());
+            BilanzRow bilanzRow = BilanzRow.builder() //
+                    // expected format: yyyy-MM-dd
+                    .date(LocalDate.parse(row.getCellByIndex(0).getStringValue()))
+                    // remove trailing spaces and currency symbol
+                    .amount(new BigDecimal(cleanUpAmount(row.getCellByIndex(1).getStringValue()))) //
+                    .description(row.getCellByIndex(2).getStringValue()) //
+                    .shop(row.getCellByIndex(3).getStringValue()) //
+                    .payment(row.getCellByIndex(4).getStringValue()) //
+                    .category(row.getCellByIndex(5).getStringValue()).build();
 
             return Optional.of(bilanzRow);
         } catch (Exception e) {
