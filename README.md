@@ -17,3 +17,12 @@ It contains a bunch of tables with certain logics. One of them is called Ausgabe
 3. Load and extract its data into an in-memory-database (h2)
 4. Perform data visualisation on this database to allow drilldowns and lists in various dimensions
 
+## Bootstrap integration
+
+* in src/main/resources/static run
+´
+npm install bootstrap@5.3.8
+´
+and copy all stuff from 
+node_modules/bootstrap/dist
+into the application base folder.
