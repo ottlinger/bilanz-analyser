@@ -1,6 +1,7 @@
 package de.aikiit.bilanzanalyser.upload;
 
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,8 +22,15 @@ import java.nio.file.Paths;
 public class UploadController {
     private static final String UPLOAD_DIR = "uploads-bilanz-analyser";
 
+    private final UploadService uploadService;
+
     @Value("${java.io.tmpdir}")
     private String tempDir;
+
+    @Autowired
+    public UploadController(UploadService uploadService) {
+        this.uploadService = uploadService;
+    }
 
     @GetMapping("/upload")
     public ModelAndView upload() {
@@ -51,7 +59,9 @@ public class UploadController {
             Path destination = Paths.get(uploadDir.toString(), System.currentTimeMillis() + ".ods");
             file.transferTo(destination);
 
-            model.addAttribute("sucmessage", "File uploaded successfully: " + file.getOriginalFilename());
+            // Process rows ....
+            int rows = uploadService.rowCount(destination);
+            model.addAttribute("sucmessage", "File uploaded successfully: " + file.getOriginalFilename() + " with " + rows + " rows");
         } catch (IOException e) {
             log.error(e.getMessage());
             model.addAttribute("message", "Upload failed: " + e.getMessage());
