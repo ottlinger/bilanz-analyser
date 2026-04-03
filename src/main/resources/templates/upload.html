@@ -1,0 +1,22 @@
+<!DOCTYPE>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
+    <title>Upload</title>
+</head>
+<body>
+<div class="container mt-0">
+    <h2>Upload File</h2>
+    <form action="/handle-upload" method="post" enctype="multipart-data">
+        <div id="form-group">
+            <label for="fileUploadChoose"></label>
+            <input type="file" class="classform-control-file" id="fileUploadChoose">
+        </div>
+        <button type="submit" class="btn btn-primary">Upload</button>
+    </form>
+</div>
+<script src="./js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
