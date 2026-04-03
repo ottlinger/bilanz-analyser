@@ -5,14 +5,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.io.File;
 
 @RestController
 public class UploadController {
     @GetMapping("/upload")
-    public String upload() {
-        return "upload";
+    public ModelAndView upload() {
+        return new ModelAndView("upload");
     }
 
     @PostMapping("/handle-upload")
