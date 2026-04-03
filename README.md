@@ -26,3 +26,9 @@ npm install bootstrap@5.3.8
 and copy all stuff from 
 node_modules/bootstrap/dist
 into the application base folder.
+
+## Bootstrap icon integration
+
+* https://icons.getbootstrap.com/
+* download ZIP
+* put all files from the zip into [src/main/resources/static/css/icons/](src/main/resources/static/css/icons/)
