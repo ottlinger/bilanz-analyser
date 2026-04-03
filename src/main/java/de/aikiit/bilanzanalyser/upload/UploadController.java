@@ -43,7 +43,7 @@ public class UploadController {
     }
 
     @PostMapping("/upload")
-    public ModelAndView handleFileUpload(@RequestParam("file") MultipartFile file, @RequestParam String selectedWorksheet) {
+    public ModelAndView handleFileUpload(@RequestParam("file") MultipartFile file, @RequestParam("selectedWorksheet") String selectedWorksheet) {
 
         // Create ModelAndView for the "upload" view
         ModelAndView mav = new ModelAndView("upload");
@@ -78,7 +78,7 @@ public class UploadController {
 
             // Process rows ....
             int rows = uploadService.rowCount(destination, selectedWorksheet);
-            // and cleanup
+            // and cleanup afterwards
             Files.delete(destination);
 
             mav.addObject("sucmessage", "File uploaded successfully with " + rows + " rows in table " + escapedSelectedWorksheet);
