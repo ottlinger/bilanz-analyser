@@ -61,6 +61,9 @@ public class UploadController {
 
             // Process rows ....
             int rows = uploadService.rowCount(destination);
+            // and cleanup
+            Files.delete(destination);
+
             model.addAttribute("sucmessage", "File uploaded successfully: " + file.getOriginalFilename() + " with " + rows + " rows");
         } catch (IOException e) {
             log.error(e.getMessage());
