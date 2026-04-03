@@ -16,11 +16,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 @Log4j2
 @RestController
 public class UploadController {
     private static final String UPLOAD_DIR = "uploads-bilanz-analyser";
+    private static List<String> RELEVANT_WORKSHEETS = List.of("Ausgaben", "Einnahmen");
 
     private final UploadService uploadService;
 
@@ -33,13 +35,14 @@ public class UploadController {
     }
 
     @GetMapping("/upload")
-    public ModelAndView upload() {
+    public ModelAndView upload(Model model) {
+        model.addAttribute("worksheets", RELEVANT_WORKSHEETS);
+        model.addAttribute("selectedWorksheet", "Ausgaben");
         return new ModelAndView("upload");
     }
 
     @PostMapping("/upload")
-    public ModelAndView handleFileUpload(@RequestParam("file") MultipartFile file,
-                                         Model model) {
+    public ModelAndView handleFileUpload(@RequestParam("file") MultipartFile file, @RequestParam String selectedWorksheet, Model model) {
         if (file.isEmpty()) {
             model.addAttribute("message", "Please select a file to upload");
             return new ModelAndView("upload");
@@ -51,6 +54,9 @@ public class UploadController {
         }
 
         try {
+            // make sure default is available
+            model.addAttribute("worksheets", RELEVANT_WORKSHEETS);
+
             // Create directory if not exists under current temp base dir
             Path uploadDir = Paths.get(tempDir + File.separatorChar + UPLOAD_DIR);
             Files.createDirectories(uploadDir);
@@ -60,7 +66,7 @@ public class UploadController {
             file.transferTo(destination);
 
             // Process rows ....
-            int rows = uploadService.rowCount(destination);
+            int rows = uploadService.rowCount(destination, selectedWorksheet);
             // and cleanup
             Files.delete(destination);
 

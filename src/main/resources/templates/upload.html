@@ -11,14 +11,26 @@
 <div class="container mt-0">
     <h2>Upload ODS-Bilanz</h2>
     <div th:if="${message != null}" class="p-4 alert alert-danger" role="alert">
-        <i class="bi bi-bug"></i><p th:text="${message}"></p>
+        <i class="bi bi-bug"></i>
+        <p th:text="${message}"></p>
     </div>
     <div th:if="${sucmessage != null}" class="p-4 alert alert-success" role="alert">
-        <i class="bi bi-card-checklist"></i><p th:text="${sucmessage}"></p>
+        <i class="bi bi-card-checklist"></i>
+        <p th:text="${sucmessage}"></p>
         Go to <a th:href="@{/}"><i class="bi bi-pencil-square"></i> Startpage</a> to continue
     </div>
-    <form action="/upload" method="post" enctype="multipart/form-data">
+    <form th:action="@{/upload}" method="post" enctype="multipart/form-data">
         <div id="form-group">
+            <div class="mb-3">
+                <label for="selectedWorksheet">Tabellenname im Dokument:</label>
+                <select class="form-select" name="selectedWorksheet" id="selectedWorksheet">
+                    <option th:each="worksheet : ${worksheets}"
+                            th:value="${worksheet}"
+                            th:text="${worksheet}">}"
+                            th:selected="${worksheet == selectedWorksheet}">
+                    </option>
+                </select>
+            </div>
             <label for="file-upload">Dateiauswahl</label>
             <input type="file" class="classform-control-file" name="file" id="file-upload">
         </div>
