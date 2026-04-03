@@ -4,13 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="./css/bootstrap.min.css" rel="stylesheet">
+    <link href="./css/icons/bootstrap-icons.css" rel="stylesheet">
     <title>Datei hochladen</title>
 </head>
 <body>
 <div class="container mt-0">
     <h2>Upload ODS-Bilanz</h2>
-    <div th:if="${message != null}"  class="p-4 alert alert-danger" role="alert">
-        Error: <p th:text="${message}"></p>
+    <div th:if="${message != null}" class="p-4 alert alert-danger" role="alert">
+        <i class="bi bi-bug"></i><p th:text="${message}"></p>
+    </div>
+    <div th:if="${sucmessage != null}" class="p-4 alert alert-success" role="alert">
+        <i class="bi bi-card-checklist"></i><p th:text="${sucmessage}"></p>
+        Go to <a th:href="@{/}"><i class="bi bi-pencil-square"></i> Startpage</a> to continue
     </div>
     <form action="/upload" method="post" enctype="multipart/form-data">
         <div id="form-group">

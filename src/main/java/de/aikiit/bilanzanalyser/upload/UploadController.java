@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Log4j2
@@ -42,13 +42,12 @@ public class UploadController {
             Files.createDirectories(Paths.get(UPLOAD_DIR));
 
             // Save file
-            String filePath = UPLOAD_DIR + System.currentTimeMillis() + ".ods";
-            File dest = new File(filePath);
-            file.transferTo(dest);
+            Path destination = Paths.get(UPLOAD_DIR, System.currentTimeMillis() + ".ods");
+            file.transferTo(destination);
 
-            log.info("Processing file " + dest.getAbsolutePath());
-            model.addAttribute("message", "File uploaded successfully: " + file.getOriginalFilename());
+            model.addAttribute("sucmessage", "File uploaded successfully: " + file.getOriginalFilename());
         } catch (IOException e) {
+            log.error(e.getMessage());
             model.addAttribute("message", "Upload failed: " + e.getMessage());
         }
         return new ModelAndView("upload");

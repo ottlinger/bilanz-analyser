@@ -32,3 +32,4 @@ into the application base folder.
 * https://icons.getbootstrap.com/
 * download ZIP
 * put all files from the zip into [src/main/resources/static/css/icons/](src/main/resources/static/css/icons/)
+* Find an icon via: https://icons.getbootstrap.com/?q=file
