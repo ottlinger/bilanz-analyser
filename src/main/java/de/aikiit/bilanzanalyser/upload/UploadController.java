@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.HtmlUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +23,7 @@ import java.util.List;
 @RestController
 public class UploadController {
     private static final String UPLOAD_DIR = "uploads-bilanz-analyser";
-    private static List<String> RELEVANT_WORKSHEETS = List.of("Ausgaben", "Einnahmen");
+    private static final List<String> RELEVANT_WORKSHEETS = List.of("Ausgaben", "Einnahmen");
 
     private final UploadService uploadService;
 
@@ -42,21 +43,31 @@ public class UploadController {
     }
 
     @PostMapping("/upload")
-    public ModelAndView handleFileUpload(@RequestParam("file") MultipartFile file, @RequestParam String selectedWorksheet, Model model) {
+    public ModelAndView handleFileUpload(@RequestParam("file") MultipartFile file, @RequestParam String selectedWorksheet) {
+
+        // Create ModelAndView for the "upload" view
+        ModelAndView mav = new ModelAndView("upload");
+        mav.addObject("worksheets", RELEVANT_WORKSHEETS);
+
+        // prevent mingling with selected worksheet and properly escape user-provided value
+        if (!RELEVANT_WORKSHEETS.contains(selectedWorksheet)) {
+            mav.addObject("message", "Invalid worksheet selected");
+            return mav;
+        }
+        String escapedSelectedWorksheet = HtmlUtils.htmlEscape(selectedWorksheet);
+        mav.addObject("selectedWorksheet", escapedSelectedWorksheet);
+
         if (file.isEmpty()) {
-            model.addAttribute("message", "Please select a file to upload");
-            return new ModelAndView("upload");
+            mav.addObject("message", "Please select a file to upload");
+            return mav;
         }
 
         if (!"application/vnd.oasis.opendocument.spreadsheet".equals(file.getContentType())) {
-            model.addAttribute("message", "Only ODS spreadsheet files allowed");
-            return new ModelAndView("upload");
+            mav.addObject("message", "Only ODS spreadsheet files allowed");
+            return mav;
         }
 
         try {
-            // make sure default is available
-            model.addAttribute("worksheets", RELEVANT_WORKSHEETS);
-
             // Create directory if not exists under current temp base dir
             Path uploadDir = Paths.get(tempDir + File.separatorChar + UPLOAD_DIR);
             Files.createDirectories(uploadDir);
@@ -70,12 +81,12 @@ public class UploadController {
             // and cleanup
             Files.delete(destination);
 
-            model.addAttribute("sucmessage", "File uploaded successfully: " + file.getOriginalFilename() + " with " + rows + " rows");
+            mav.addObject("sucmessage", "File uploaded successfully with " + rows + " rows in table " + escapedSelectedWorksheet);
         } catch (IOException e) {
             log.error(e.getMessage());
-            model.addAttribute("message", "Upload failed: " + e.getMessage());
+            mav.addObject("message", "Upload failed: " + e.getMessage());
         }
-        return new ModelAndView("upload");
+        return mav;
     }
 
 }
