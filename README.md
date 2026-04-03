@@ -19,7 +19,8 @@ It contains a bunch of tables with certain logics. One of them is called Ausgabe
 
 ## Bootstrap integration
 
-* in src/main/resources/static run
+* https://getbootstrap.com/docs/5.3/getting-started/download/
+* in *src/main/resources/static* run
 
 ```
 npm install bootstrap@5.3.8
