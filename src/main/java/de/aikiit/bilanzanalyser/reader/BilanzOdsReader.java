@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -34,6 +35,10 @@ public class BilanzOdsReader {
     public List<BilanzRow> extractData() throws IOException {
         try {
             OdfTable table = readTable();
+            if (table == null) {
+                return Collections.emptyList();
+            }
+
             // ODS default is 1048576 albeit it's only empty rows
             System.out.println("Given table '" + this.tableName + "' has " + table.getRowCount() + " rows");
 

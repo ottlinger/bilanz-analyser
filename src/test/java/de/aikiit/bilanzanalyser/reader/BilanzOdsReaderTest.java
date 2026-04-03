@@ -25,4 +25,12 @@ class BilanzOdsReaderTest {
 
         assertThat(reader.extractData()).hasSize(152);
     }
+
+    @Test
+    void createAndParseExampleDataForSpreadsheetNameThatDoesNotExist() throws Exception {
+        BilanzOdsReader reader = new BilanzOdsReader("NotExisting", Paths.get(resource.getURI()));
+        assertNotNull(reader);
+        assertThat(reader.extractData()).hasSize(0);
+    }
+
 }
