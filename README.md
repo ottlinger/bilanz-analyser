@@ -20,11 +20,12 @@ It contains a bunch of tables with certain logics. One of them is called Ausgabe
 ## Bootstrap integration
 
 * in src/main/resources/static run
-´
+
+```
 npm install bootstrap@5.3.8
-´
+```
 and copy all stuff from 
-node_modules/bootstrap/dist
+*node_modules/bootstrap/dist*
 into the application base folder.
 
 ## Bootstrap icon integration
