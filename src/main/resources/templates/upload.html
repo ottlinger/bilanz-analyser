@@ -19,6 +19,33 @@
         <p th:text="${sucmessage}"></p>
         Go to <a th:href="@{/}"><i class="bi bi-pencil-square"></i> Startpage</a> to continue
     </div>
+
+    <div th:if="${statistic != null}" class="container mt-5">
+        <h2 class="mb-4">Prozessierungsergebnisse</h2>
+        <table class="table table-striped table-bordered">
+            <thead class="table-dark">
+            <tr>
+                <th>Kategorie</th>
+                <th>Anzahl</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Fehler:</td>
+                <td th:text="${statistic.error}"></td>
+            </tr>
+            <tr>
+                <td>Erfolge:</td>
+                <td th:text="${statistic.entries}"></td>
+            </tr>
+            <tr>
+                <td>Summe:</td>
+                <td th:text="${statistic.count}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
     <form th:action="@{/upload}" method="post" enctype="multipart/form-data">
         <div id="form-group">
             <div class="mb-3">
@@ -27,7 +54,7 @@
                     <option th:each="worksheet : ${worksheets}"
                             th:value="${worksheet}"
                             th:text="${worksheet}">}"
-                            th:selected="${worksheet == selectedWorksheet}">
+                        th:selected="${worksheet == selectedWorksheet}">
                     </option>
                 </select>
             </div>
