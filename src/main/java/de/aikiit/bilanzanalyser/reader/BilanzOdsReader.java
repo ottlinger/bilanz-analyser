@@ -3,6 +3,7 @@ package de.aikiit.bilanzanalyser.reader;
 import de.aikiit.bilanzanalyser.entity.BilanzRow;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.extern.log4j.Log4j2;
 import org.odftoolkit.odfdom.doc.OdfSpreadsheetDocument;
 import org.odftoolkit.odfdom.doc.table.OdfTable;
 import org.odftoolkit.odfdom.doc.table.OdfTableCell;
@@ -21,6 +22,7 @@ import static de.aikiit.bilanzanalyser.reader.BilanzRowParser.fromOdfTableRow;
 
 @Data
 @AllArgsConstructor
+@Log4j2
 public class BilanzOdsReader {
 
     private String tableName;
@@ -40,7 +42,7 @@ public class BilanzOdsReader {
             }
 
             // ODS default is 1048576 albeit it's only empty rows
-            System.out.println("Given table '" + this.tableName + "' has " + table.getRowCount() + " rows");
+            log.info("Given table '{}' has {} rows", this.tableName, table.getRowCount());
 
             List<BilanzRow> rows = new ArrayList<>();
             AtomicInteger counter = new AtomicInteger(0);
@@ -52,7 +54,7 @@ public class BilanzOdsReader {
 
                 // only allow 5 empty rows in a row
                 if (counter.get() == 5) {
-                    System.out.println("STOPPING due to too many empty lines after having read " + readRows.get() + " non-empty rows.");
+                    log.info("STOPPING due to too many empty lines after having read {} non-empty rows.", readRows.get());
                     break;
                 }
 
@@ -73,7 +75,7 @@ public class BilanzOdsReader {
                 }
             }
 
-            System.out.println("Extracted " + rows.size() + " rows successfully, while skipping " + rowsWithParsingErrors.get() + " not well formatted rows.");
+            log.info("Extracted {} rows successfully, while skipping {} not well formatted rows.", rows.size(), rowsWithParsingErrors.get());
             return rows;
         } catch (Exception e) {
             throw new IOException(e);
@@ -90,7 +92,7 @@ public class BilanzOdsReader {
         try {
             OdfSpreadsheetDocument document = OdfSpreadsheetDocument.loadDocument(new File("/tmp/example.ods"));
             OdfTable table = document.getTableByName("Ausgaben");
-            System.out.println(table.getRowCount() + " lines to read");
+            log.info("{} lines to read", table.getRowCount());
 
             for (int row = 0; row < 10 /*table.getRowCount() */; row++) {
                 for (int col = 0; col < table.getColumnCount(); col++) {
