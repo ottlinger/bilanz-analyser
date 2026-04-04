@@ -11,11 +11,7 @@ import java.util.List;
  * @param rowCount   row count equals the number seen, not parsed correctly.
  * @param rows       extracted and parsed rows. May be less than rowCount.
  */
-public record BilanzRowParserResult(
-        int errorCount,
-        int rowCount,
-        List<BilanzRow> rows
-) {
+public record BilanzRowParserResult(int errorCount, int rowCount, List<BilanzRow> rows) {
 
     public BilanzRowParserResult {
         rows = rows == null ? List.of() : List.copyOf(rows);

@@ -64,6 +64,7 @@ class UploadControllerTest {
         assertEquals("upload", mav.getViewName());
         assertTrue(mav.getModel().containsKey("sucmessage"));
         assertTrue(((String) mav.getModel().get("sucmessage")).contains("42"));
+        assertTrue(mav.getModel().containsKey("statistic"));
 
         verify(uploadAnalysisService, times(1)).processFile(any(Path.class), eq("Ausgaben"));
     }

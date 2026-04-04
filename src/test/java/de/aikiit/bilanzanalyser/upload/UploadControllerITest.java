@@ -65,6 +65,7 @@ class UploadControllerITest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("upload"))
                 .andExpect(model().attributeExists("sucmessage"))
+                .andExpect(model().attributeExists("statistic"))
                 .andExpect(model().attributeExists("worksheets"))
                 .andExpect(model().attribute("selectedWorksheet", "Ausgaben"));
 
