@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 class UploadControllerTest {
 
     @Mock
-    private UploadService uploadService;
+    private UploadAnalysisService uploadAnalysisService;
 
     @InjectMocks
     private UploadController uploadController;
@@ -55,7 +55,7 @@ class UploadControllerTest {
                 "dummy content".getBytes()
         );
 
-        when(uploadService.rowCount(any(Path.class), eq("Ausgaben"))).thenReturn(42);
+        when(uploadAnalysisService.rowCount(any(Path.class), eq("Ausgaben"))).thenReturn(42);
 
         ModelAndView mav = uploadController.handleFileUpload(file, "Ausgaben");
 
@@ -63,7 +63,7 @@ class UploadControllerTest {
         assertTrue(mav.getModel().containsKey("sucmessage"));
         assertTrue(((String) mav.getModel().get("sucmessage")).contains("42"));
 
-        verify(uploadService, times(1)).rowCount(any(Path.class), eq("Ausgaben"));
+        verify(uploadAnalysisService, times(1)).rowCount(any(Path.class), eq("Ausgaben"));
     }
 
     @Test
@@ -80,7 +80,7 @@ class UploadControllerTest {
         assertEquals("upload", mav.getViewName());
         assertEquals("Invalid worksheet selected", mav.getModel().get("message"));
 
-        verifyNoInteractions(uploadService);
+        verifyNoInteractions(uploadAnalysisService);
     }
 
     @Test
@@ -95,7 +95,7 @@ class UploadControllerTest {
         ModelAndView mav = uploadController.handleFileUpload(file, "Ausgaben");
 
         assertEquals("Please select a file to upload", mav.getModel().get("message"));
-        verifyNoInteractions(uploadService);
+        verifyNoInteractions(uploadAnalysisService);
     }
 
     @Test
@@ -110,7 +110,7 @@ class UploadControllerTest {
         ModelAndView mav = uploadController.handleFileUpload(file, "Ausgaben");
 
         assertEquals("Only ODS spreadsheet files allowed", mav.getModel().get("message"));
-        verifyNoInteractions(uploadService);
+        verifyNoInteractions(uploadAnalysisService);
     }
 
     @Test
@@ -122,12 +122,12 @@ class UploadControllerTest {
                 "dummy content".getBytes()
         );
 
-        when(uploadService.rowCount(any(Path.class), eq("Ausgaben")))
+        when(uploadAnalysisService.rowCount(any(Path.class), eq("Ausgaben")))
                 .thenThrow(new IOException("Processing error"));
 
         ModelAndView mav = uploadController.handleFileUpload(file, "Ausgaben");
 
         assertTrue(((String) mav.getModel().get("message")).contains("Upload failed"));
-        verify(uploadService, times(1)).rowCount(any(Path.class), eq("Ausgaben"));
+        verify(uploadAnalysisService, times(1)).rowCount(any(Path.class), eq("Ausgaben"));
     }
 }

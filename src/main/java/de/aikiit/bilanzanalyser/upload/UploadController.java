@@ -3,7 +3,6 @@ package de.aikiit.bilanzanalyser.upload;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,14 +24,14 @@ public class UploadController {
     private static final String UPLOAD_DIR = "uploads-bilanz-analyser";
     private static final List<String> RELEVANT_WORKSHEETS = List.of("Ausgaben", "Einnahmen");
 
-    private final UploadService uploadService;
+    private final UploadAnalysisService uploadAnalysisService;
 
     @Value("${java.io.tmpdir}")
     private String tempDir;
 
     @Autowired
-    public UploadController(UploadService uploadService) {
-        this.uploadService = uploadService;
+    public UploadController(UploadAnalysisService uploadAnalysisService) {
+        this.uploadAnalysisService = uploadAnalysisService;
     }
 
     @GetMapping("/upload")
@@ -78,7 +77,7 @@ public class UploadController {
             file.transferTo(destination);
 
             // Process rows ....
-            int rows = uploadService.rowCount(destination, selectedWorksheet);
+            int rows = uploadAnalysisService.rowCount(destination, selectedWorksheet);
             // and cleanup afterwards
             Files.delete(destination);
 

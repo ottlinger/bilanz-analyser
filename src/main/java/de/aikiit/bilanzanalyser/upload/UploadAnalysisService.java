@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 @Service
-public class UploadService {
+public class UploadAnalysisService {
 
     int rowCount(Path source, String worksheetName) throws IOException {
         BilanzOdsReader reader = new BilanzOdsReader(worksheetName, source);

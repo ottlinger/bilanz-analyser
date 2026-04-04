@@ -30,7 +30,7 @@ class UploadControllerITest {
     private MockMvc mockMvc;
 
     @MockitoBean
-    private UploadService uploadService;
+    private UploadAnalysisService uploadAnalysisService;
 
     @Autowired
     private UploadController uploadController;
@@ -55,7 +55,7 @@ class UploadControllerITest {
                 "dummy content".getBytes()
         );
 
-        when(uploadService.rowCount(any(Path.class), eq("Ausgaben"))).thenReturn(10);
+        when(uploadAnalysisService.rowCount(any(Path.class), eq("Ausgaben"))).thenReturn(10);
 
         mockMvc.perform(multipart("/upload")
                         .file(file)
@@ -66,7 +66,7 @@ class UploadControllerITest {
                 .andExpect(model().attributeExists("worksheets"))
                 .andExpect(model().attribute("selectedWorksheet", "Ausgaben"));
 
-        verify(uploadService, times(1)).rowCount(any(Path.class), eq("Ausgaben"));
+        verify(uploadAnalysisService, times(1)).rowCount(any(Path.class), eq("Ausgaben"));
     }
 
     @Test
@@ -84,7 +84,7 @@ class UploadControllerITest {
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("message", "Invalid worksheet selected"));
 
-        verifyNoInteractions(uploadService);
+        verifyNoInteractions(uploadAnalysisService);
     }
 
     @Test
@@ -102,7 +102,7 @@ class UploadControllerITest {
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("message", "Please select a file to upload"));
 
-        verifyNoInteractions(uploadService);
+        verifyNoInteractions(uploadAnalysisService);
     }
 
     @Test
@@ -120,7 +120,7 @@ class UploadControllerITest {
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("message", "Only ODS spreadsheet files allowed"));
 
-        verifyNoInteractions(uploadService);
+        verifyNoInteractions(uploadAnalysisService);
     }
 
     @Test
@@ -134,7 +134,7 @@ class UploadControllerITest {
                 "dummy content".getBytes()
         );
 
-        when(uploadService.rowCount(any(Path.class), eq("Ausgaben")))
+        when(uploadAnalysisService.rowCount(any(Path.class), eq("Ausgaben")))
                 .thenThrow(new IOException("Processing error"));
 
         mockMvc.perform(multipart("/upload")
@@ -144,6 +144,6 @@ class UploadControllerITest {
                 .andExpect(model().attributeExists("message"))
                 .andExpect(model().attribute("message", org.hamcrest.Matchers.containsString("Upload failed")));
 
-        verify(uploadService, times(1)).rowCount(any(Path.class), eq("Ausgaben"));
+        verify(uploadAnalysisService, times(1)).rowCount(any(Path.class), eq("Ausgaben"));
     }
 }
