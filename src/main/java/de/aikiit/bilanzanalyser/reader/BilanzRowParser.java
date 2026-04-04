@@ -3,6 +3,7 @@ package de.aikiit.bilanzanalyser.reader;
 import de.aikiit.bilanzanalyser.entity.BilanzRow;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.odftoolkit.odfdom.doc.table.OdfTableRow;
 
 import java.math.BigDecimal;
@@ -10,6 +11,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Log4j2
 public class BilanzRowParser {
 
     public static Optional<BilanzRow> fromOdfTableRow(OdfTableRow row) {
@@ -26,7 +28,7 @@ public class BilanzRowParser {
 
             return Optional.of(bilanzRow);
         } catch (Exception e) {
-            System.err.println("Skipping row due to: " + e.getMessage());
+            log.error("Skipping row due to: {}", e.getMessage());
             return Optional.empty();
         }
     }

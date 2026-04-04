@@ -36,10 +36,11 @@ public class UploadController {
     }
 
     @GetMapping("/upload")
-    public ModelAndView upload(Model model) {
-        model.addAttribute("worksheets", RELEVANT_WORKSHEETS);
-        model.addAttribute("selectedWorksheet", "Ausgaben");
-        return new ModelAndView("upload");
+    public ModelAndView upload() {
+        ModelAndView mav = new ModelAndView("upload");
+        mav.addObject("worksheets", RELEVANT_WORKSHEETS);
+        mav.addObject("selectedWorksheet", "Ausgaben");
+        return mav;
     }
 
     @PostMapping("/upload")
