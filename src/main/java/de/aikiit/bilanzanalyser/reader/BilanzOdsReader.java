@@ -85,6 +85,7 @@ public class BilanzOdsReader {
                 } else {
                     counter.set(0);
                     readRows.incrementAndGet();
+                    result = result.withRow();
 
                     Optional<BilanzRow> br = fromOdfTableRow(row);
                     if (br.isPresent()) {
