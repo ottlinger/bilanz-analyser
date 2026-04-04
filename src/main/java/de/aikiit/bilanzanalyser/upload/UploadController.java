@@ -77,9 +77,8 @@ public class UploadController {
             Path destination = Paths.get(uploadDir.toString(), System.currentTimeMillis() + ".ods");
             file.transferTo(destination);
 
-            // Process rows ....
+            // Process rows and cleanup afterwards
             BilanzRowParserResult result = uploadAnalysisService.processFile(destination, selectedWorksheet);
-            // and cleanup afterwards
             Files.delete(destination);
 
             mav.addObject("sucmessage", "File uploaded successfully. Processed " + result.rowCount() + " rows in table " + escapedSelectedWorksheet);
