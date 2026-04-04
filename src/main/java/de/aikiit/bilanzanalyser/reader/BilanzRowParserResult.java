@@ -4,6 +4,11 @@ import de.aikiit.bilanzanalyser.entity.BilanzRow;
 
 import java.util.List;
 
+/**
+ * Result of parsing a spreadsheet file with
+ * @param errorCount error row count.
+ * @param rows extracted rows.
+ */
 public record BilanzRowParserResult(
         int errorCount,
         List<BilanzRow> rows

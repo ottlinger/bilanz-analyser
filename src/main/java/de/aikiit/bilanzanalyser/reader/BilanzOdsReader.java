@@ -13,7 +13,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -27,6 +26,25 @@ public class BilanzOdsReader {
 
     private String tableName;
     private Path source;
+
+    public static void main(String[] args) {
+        try {
+            OdfSpreadsheetDocument document = OdfSpreadsheetDocument.loadDocument(new File("/tmp/example.ods"));
+            OdfTable table = document.getTableByName("Ausgaben");
+            log.info("{} lines to read", table.getRowCount());
+
+            for (int row = 0; row < 10 /*table.getRowCount() */; row++) {
+                for (int col = 0; col < table.getColumnCount(); col++) {
+                    OdfTableCell cell = table.getCellByPosition(col, row);
+                    System.out.print(cell.getStringValue() + "\t");
+                }
+                System.out.println();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Parses the given tableName in the configured ODS file.
@@ -71,7 +89,6 @@ public class BilanzOdsReader {
                     Optional<BilanzRow> br = fromOdfTableRow(row);
                     if (br.isPresent()) {
                         rows.add(br.get());
-                        result = result.addRow(br.get());
                     } else {
                         rowsWithParsingErrors.incrementAndGet();
                         result = result.withError();
@@ -80,7 +97,7 @@ public class BilanzOdsReader {
             }
 
             log.info("Extracted {} rows successfully, while skipping {} not well formatted rows.", rows.size(), rowsWithParsingErrors.get());
-            return result;
+            return result.withRows(rows);
         } catch (Exception e) {
             throw new IOException(e);
         }
@@ -89,25 +106,6 @@ public class BilanzOdsReader {
     private OdfTable readTable() throws Exception {
         try (OdfSpreadsheetDocument document = OdfSpreadsheetDocument.loadDocument(source.toFile())) {
             return document.getTableByName(this.tableName);
-        }
-    }
-
-    public static void main(String[] args) {
-        try {
-            OdfSpreadsheetDocument document = OdfSpreadsheetDocument.loadDocument(new File("/tmp/example.ods"));
-            OdfTable table = document.getTableByName("Ausgaben");
-            log.info("{} lines to read", table.getRowCount());
-
-            for (int row = 0; row < 10 /*table.getRowCount() */; row++) {
-                for (int col = 0; col < table.getColumnCount(); col++) {
-                    OdfTableCell cell = table.getCellByPosition(col, row);
-                    System.out.print(cell.getStringValue() + "\t");
-                }
-                System.out.println();
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 }
