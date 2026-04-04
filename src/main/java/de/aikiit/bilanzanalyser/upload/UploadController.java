@@ -1,5 +1,6 @@
 package de.aikiit.bilanzanalyser.upload;
 
+import de.aikiit.bilanzanalyser.reader.BilanzRowParserResult;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -77,11 +78,11 @@ public class UploadController {
             file.transferTo(destination);
 
             // Process rows ....
-            int rows = uploadAnalysisService.rowCount(destination, selectedWorksheet);
+            BilanzRowParserResult result = uploadAnalysisService.processFile(destination, selectedWorksheet);
             // and cleanup afterwards
             Files.delete(destination);
 
-            mav.addObject("sucmessage", "File uploaded successfully with " + rows + " rows in table " + escapedSelectedWorksheet);
+            mav.addObject("sucmessage", "File uploaded successfully. Processed " + result.rowCount() + " rows in table " + escapedSelectedWorksheet);
         } catch (IOException e) {
             log.error(e.getMessage());
             mav.addObject("message", "Upload failed: " + e.getMessage());

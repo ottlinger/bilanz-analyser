@@ -1,5 +1,6 @@
 package de.aikiit.bilanzanalyser.upload;
 
+import de.aikiit.bilanzanalyser.reader.BilanzRowParserResult;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -10,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -55,7 +57,7 @@ class UploadControllerITest {
                 "dummy content".getBytes()
         );
 
-        when(uploadAnalysisService.rowCount(any(Path.class), eq("Ausgaben"))).thenReturn(10);
+        when(uploadAnalysisService.processFile(any(Path.class), eq("Ausgaben"))).thenReturn(new BilanzRowParserResult(1, 2, Collections.emptyList()));
 
         mockMvc.perform(multipart("/upload")
                         .file(file)
@@ -66,7 +68,7 @@ class UploadControllerITest {
                 .andExpect(model().attributeExists("worksheets"))
                 .andExpect(model().attribute("selectedWorksheet", "Ausgaben"));
 
-        verify(uploadAnalysisService, times(1)).rowCount(any(Path.class), eq("Ausgaben"));
+        verify(uploadAnalysisService, times(1)).processFile(any(Path.class), eq("Ausgaben"));
     }
 
     @Test
@@ -134,7 +136,7 @@ class UploadControllerITest {
                 "dummy content".getBytes()
         );
 
-        when(uploadAnalysisService.rowCount(any(Path.class), eq("Ausgaben")))
+        when(uploadAnalysisService.processFile(any(Path.class), eq("Ausgaben")))
                 .thenThrow(new IOException("Processing error"));
 
         mockMvc.perform(multipart("/upload")
@@ -144,6 +146,6 @@ class UploadControllerITest {
                 .andExpect(model().attributeExists("message"))
                 .andExpect(model().attribute("message", org.hamcrest.Matchers.containsString("Upload failed")));
 
-        verify(uploadAnalysisService, times(1)).rowCount(any(Path.class), eq("Ausgaben"));
+        verify(uploadAnalysisService, times(1)).processFile(any(Path.class), eq("Ausgaben"));
     }
 }

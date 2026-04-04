@@ -1,5 +1,6 @@
 package de.aikiit.bilanzanalyser.upload;
 
+import de.aikiit.bilanzanalyser.reader.BilanzRowParserResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -55,7 +57,7 @@ class UploadControllerTest {
                 "dummy content".getBytes()
         );
 
-        when(uploadAnalysisService.rowCount(any(Path.class), eq("Ausgaben"))).thenReturn(42);
+        when(uploadAnalysisService.processFile(any(Path.class), eq("Ausgaben"))).thenReturn(new BilanzRowParserResult(1,42, Collections.emptyList()));
 
         ModelAndView mav = uploadController.handleFileUpload(file, "Ausgaben");
 
@@ -63,7 +65,7 @@ class UploadControllerTest {
         assertTrue(mav.getModel().containsKey("sucmessage"));
         assertTrue(((String) mav.getModel().get("sucmessage")).contains("42"));
 
-        verify(uploadAnalysisService, times(1)).rowCount(any(Path.class), eq("Ausgaben"));
+        verify(uploadAnalysisService, times(1)).processFile(any(Path.class), eq("Ausgaben"));
     }
 
     @Test
@@ -122,12 +124,12 @@ class UploadControllerTest {
                 "dummy content".getBytes()
         );
 
-        when(uploadAnalysisService.rowCount(any(Path.class), eq("Ausgaben")))
+        when(uploadAnalysisService.processFile(any(Path.class), eq("Ausgaben")))
                 .thenThrow(new IOException("Processing error"));
 
         ModelAndView mav = uploadController.handleFileUpload(file, "Ausgaben");
 
         assertTrue(((String) mav.getModel().get("message")).contains("Upload failed"));
-        verify(uploadAnalysisService, times(1)).rowCount(any(Path.class), eq("Ausgaben"));
+        verify(uploadAnalysisService, times(1)).processFile(any(Path.class), eq("Ausgaben"));
     }
 }

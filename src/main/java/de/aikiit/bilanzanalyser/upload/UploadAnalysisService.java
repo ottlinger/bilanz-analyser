@@ -1,6 +1,7 @@
 package de.aikiit.bilanzanalyser.upload;
 
 import de.aikiit.bilanzanalyser.reader.BilanzOdsReader;
+import de.aikiit.bilanzanalyser.reader.BilanzRowParserResult;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -9,9 +10,9 @@ import java.nio.file.Path;
 @Service
 public class UploadAnalysisService {
 
-    int rowCount(Path source, String worksheetName) throws IOException {
-        BilanzOdsReader reader = new BilanzOdsReader(worksheetName, source);
-        return reader.extractData().rows().size();
+    BilanzRowParserResult processFile(Path spreadsheet, String worksheetName) throws IOException {
+        BilanzOdsReader reader = new BilanzOdsReader(worksheetName, spreadsheet);
+        return reader.extractData();
     }
 
 }
