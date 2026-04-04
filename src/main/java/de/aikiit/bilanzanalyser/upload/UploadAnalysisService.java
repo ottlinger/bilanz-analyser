@@ -11,7 +11,7 @@ public class UploadAnalysisService {
 
     int rowCount(Path source, String worksheetName) throws IOException {
         BilanzOdsReader reader = new BilanzOdsReader(worksheetName, source);
-        return reader.extractData().size();
+        return reader.extractData().rows().size();
     }
 
 }

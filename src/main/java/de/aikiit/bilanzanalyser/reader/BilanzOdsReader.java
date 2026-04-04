@@ -31,14 +31,16 @@ public class BilanzOdsReader {
     /**
      * Parses the given tableName in the configured ODS file.
      *
-     * @return list of {@link BilanzRow} rows.
+     * @return result object.
      * @throws IOException in case of general I/O errors as parsing errors are transformed into skipped rows.
      */
-    public List<BilanzRow> extractData() throws IOException {
+    public BilanzRowParserResult extractData() throws IOException {
         try {
+            BilanzRowParserResult result = BilanzRowParserResult.empty();
+
             OdfTable table = readTable();
             if (table == null) {
-                return Collections.emptyList();
+                return result;
             }
 
             // ODS default is 1048576 albeit it's only empty rows
@@ -69,14 +71,16 @@ public class BilanzOdsReader {
                     Optional<BilanzRow> br = fromOdfTableRow(row);
                     if (br.isPresent()) {
                         rows.add(br.get());
+                        result = result.addRow(br.get());
                     } else {
                         rowsWithParsingErrors.incrementAndGet();
+                        result = result.withError();
                     }
                 }
             }
 
             log.info("Extracted {} rows successfully, while skipping {} not well formatted rows.", rows.size(), rowsWithParsingErrors.get());
-            return rows;
+            return result;
         } catch (Exception e) {
             throw new IOException(e);
         }
