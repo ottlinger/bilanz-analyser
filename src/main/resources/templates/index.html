@@ -4,13 +4,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>BilanzAnalyser - main</title>
-    <link href="../static/css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
 </head>
 <body>
 <main>
     <div class="container py-4">
         <header class="pb-3 mb-4 border-bottom">
-            <a href="/static" class="d-flex align-items-center text-body-emphasis text-decoration-none">
+            <a th:href="@{/index.html}" class="d-flex align-items-center text-body-emphasis text-decoration-none">
                 <svg xmlns="http://www.w3.org/2000/svg" width="40" height="32" class="me-2" viewBox="0 0 118 94"
                      role="img"><title>Bootstrap</title>
                     <path fill-rule="evenodd" clip-rule="evenodd"
@@ -26,7 +26,7 @@
                 <h1 class="display-5 fw-bold">Datei hochladen</h1>
                 <p class="col-md-8 fs-4">Lade eine passende OpenOffice Spreadsheet (ODS)-Datei hoch, um mit der Analyse
                     zu starten.</p>
-                <a href="/upload">
+                <a th:href="@{/upload}">
                     <button class="btn btn-primary btn-lg" type="button">Upload</button>
                 </a>
             </div>
@@ -36,15 +36,14 @@
             <div class="col-md-6">
                 <div class="h-100 p-5 text-bg-dark rounded-3">
                     <h3 class="mb-3">Derzeit bekannte Daten</h3>
-                    <ul class="list-unstyled d-flex flex-wrap custom-list" id="dataItemList">
-                    </ul>
+                    <ul id="dataItemList"></ul>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="h-100 p-5 bg-body-tertiary border rounded-3">
                     <h2>Analyse</h2>
                     <p>Um die Daten zu wälzen, bietet sich der Analysebereich an.</p>
-                    <a href="/analyse">
+                    <a th:href="@{/analyse}">
                         <button class="btn btn-outline-secondary" type="button">Analyse starten</button>
                     </a>
                 </div>
@@ -56,12 +55,11 @@
         </footer>
     </div>
 </main>
-<script src="../static/js/axios/axios.min.js"></script>
-<script src="../static/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/axios/axios.min.js}"></script>
 <script>
-    window.onload = loadDataItems;
-
     async function loadDataItems() {
+        console.log("JS called"); // debug
         try {
             const response = await axios.get('/api/dataitems');
             const data = response.data;
@@ -70,8 +68,11 @@
             list.innerHTML = '';
 
             data.forEach(item => {
+                const key = Object.keys(item)[0];
+                const value = item[key];
                 const li = document.createElement('li');
-                li.textContent = item;
+                li.textContent = key + " - #" + value;
+
                 list.appendChild(li);
             });
 
@@ -79,6 +80,8 @@
             console.error('Error loading data items:', error);
         }
     }
+
+    window.onload = loadDataItems;
 </script>
 </body>
 </html>

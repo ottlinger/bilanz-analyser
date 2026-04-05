@@ -1,3 +1,3 @@
 #!/bin/bash
 echo "Launching app..."
-./mvnw spring-boot:run
+./mvnw clean spring-boot:run
