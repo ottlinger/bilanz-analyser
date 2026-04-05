@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="./css/bootstrap.min.css" rel="stylesheet">
-    <link href="./css/icons/bootstrap-icons.css" rel="stylesheet">
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/bootstrap-icons.css}" rel="stylesheet">
     <title>Datei hochladen</title>
 </head>
 <body>
@@ -64,6 +64,6 @@
         <button type="submit" class="btn btn-primary">Upload</button>
     </form>
 </div>
-<script src="./js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>

@@ -10,7 +10,7 @@
 <main>
     <div class="container py-4">
         <header class="pb-3 mb-4 border-bottom">
-            <a th:href="@{/index.html}" class="d-flex align-items-center text-body-emphasis text-decoration-none">
+            <a th:href="@{/}" class="d-flex align-items-center text-body-emphasis text-decoration-none">
                 <svg xmlns="http://www.w3.org/2000/svg" width="40" height="32" class="me-2" viewBox="0 0 118 94"
                      role="img"><title>Bootstrap</title>
                     <path fill-rule="evenodd" clip-rule="evenodd"
@@ -37,6 +37,7 @@
                 <div class="h-100 p-5 text-bg-dark rounded-3">
                     <h3 class="mb-3">Derzeit bekannte Daten</h3>
                     <ul id="dataItemList"></ul>
+                    <button class="btn btn-outline-secondary" type="button" onclick="loadDataItems()">Nachladen</button>
                 </div>
             </div>
             <div class="col-md-6">
@@ -51,7 +52,7 @@
         </div>
 
         <footer class="pt-3 mt-4 text-body-secondary border-top">
-            &copy; <span th:text="${T(java.time.Year).now()}"></span>
+            &copy; <span th:text="${T(java.time.Year).now()}"></span> Aiki-IT.
         </footer>
     </div>
 </main>
@@ -59,7 +60,6 @@
 <script th:src="@{/js/axios/axios.min.js}"></script>
 <script>
     async function loadDataItems() {
-        console.log("JS called"); // debug
         try {
             const response = await axios.get('/api/dataitems');
             const data = response.data;
