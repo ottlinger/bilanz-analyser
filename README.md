@@ -38,3 +38,7 @@ into the application base folder.
 * download ZIP
 * put all files from the zip into [src/main/resources/static/css/icons/](src/main/resources/static/css/icons/)
 * Find an icon via: https://icons.getbootstrap.com/?q=file
+
+## Favicon
+
+Generated via https://realfavicongenerator.net/
