@@ -15,6 +15,6 @@ public class DataController {
     @GetMapping("/dataitems")
     public List<Pair<String, Integer>> getDataItems() {
         // TODO replace with real data from database if done
-        return List.of(Pair.of("Apple", new Random().nextInt(100)), Pair.of("Banana", 234));
+        return List.of(Pair.of("Apple", new Random().nextInt(100)), Pair.of("Banana", 234), Pair.of("Tea", new Random().nextInt(200)));
     }
 }
