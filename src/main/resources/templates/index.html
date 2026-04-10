@@ -75,8 +75,8 @@
             list.innerHTML = '';
 
             data.forEach(item => {
-                const key = Object.keys(item)[0];
-                const value = item[key];
+                const key = item.name;
+                const value = item.value;
                 const li = document.createElement('li');
                 li.textContent = key + " - #" + value;
 
