@@ -11,7 +11,7 @@
   <groupId>de.aikiit</groupId>
   <artifactId>bilanz-analyser</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>web-app</name>
+  <name>ba-web-app</name>
   <description>Bilanz Analyser</description>
   <url>https://github.com/ottlinger/bilanz-analyser</url>
   <organization>
