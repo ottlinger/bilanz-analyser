@@ -86,9 +86,7 @@ class BilanzRowParserResultTest {
 
         BilanzRowParserResult result = new BilanzRowParserResult(0, 0, List.of(row));
 
-        assertThrows(UnsupportedOperationException.class, () -> {
-            result.rows().add(mock(BilanzRow.class));
-        });
+        assertThrows(UnsupportedOperationException.class, () -> result.rows().add(mock(BilanzRow.class)));
     }
 
     @Test

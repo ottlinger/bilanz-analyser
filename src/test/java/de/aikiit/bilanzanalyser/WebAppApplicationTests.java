@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Import;
 class WebAppApplicationTests {
 
 	@Test
-	void contextLoads() {
+	void ensureContextLoads() {
 	}
 
 }

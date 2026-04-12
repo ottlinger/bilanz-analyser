@@ -41,7 +41,7 @@ public class BilanzRowParser {
      */
     static String cleanUpAmount(String amount) {
         if (amount != null && !amount.isEmpty()) {
-            return amount.replaceAll("€", "").replaceAll(",", ".").trim();
+            return amount.replace("€", "").replace(",", ".").trim();
         }
         return amount;
     }

@@ -28,8 +28,7 @@ public class BilanzOdsReader {
     private Path source;
 
     public static void main(String[] args) {
-        try {
-            OdfSpreadsheetDocument document = OdfSpreadsheetDocument.loadDocument(new File("/tmp/example.ods"));
+        try (OdfSpreadsheetDocument document = OdfSpreadsheetDocument.loadDocument(new File("/tmp/example.ods"))) {
             OdfTable table = document.getTableByName("Ausgaben");
             log.info("{} lines to read", table.getRowCount());
 
@@ -42,7 +41,7 @@ public class BilanzOdsReader {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
         }
     }
 
