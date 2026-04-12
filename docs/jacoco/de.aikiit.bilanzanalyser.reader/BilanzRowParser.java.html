@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BilanzRowParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">web-app</a> &gt; <a href="index.source.html" class="el_package">de.aikiit.bilanzanalyser.reader</a> &gt; <span class="el_source">BilanzRowParser.java</span></div><h1>BilanzRowParser.java</h1><pre class="source lang-java linenums">package de.aikiit.bilanzanalyser.reader;
+
+import de.aikiit.bilanzanalyser.entity.BilanzRow;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.odftoolkit.odfdom.doc.table.OdfTableRow;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Optional;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+<span class="fc" id="L14">@Log4j2</span>
+public class BilanzRowParser {
+
+    public static Optional&lt;BilanzRow&gt; fromOdfTableRow(OdfTableRow row) {
+        try {
+<span class="fc" id="L19">            BilanzRow bilanzRow = BilanzRow.builder() //</span>
+                    // expected format: yyyy-MM-dd
+<span class="fc" id="L21">                    .date(LocalDate.parse(row.getCellByIndex(0).getStringValue()))</span>
+                    // remove trailing spaces and currency symbol
+<span class="fc" id="L23">                    .amount(new BigDecimal(cleanUpAmount(row.getCellByIndex(1).getStringValue()))) //</span>
+<span class="fc" id="L24">                    .description(row.getCellByIndex(2).getStringValue()) //</span>
+<span class="fc" id="L25">                    .shop(row.getCellByIndex(3).getStringValue()) //</span>
+<span class="fc" id="L26">                    .payment(row.getCellByIndex(4).getStringValue()) //</span>
+<span class="fc" id="L27">                    .category(row.getCellByIndex(5).getStringValue()).build();</span>
+
+<span class="fc" id="L29">            return Optional.of(bilanzRow);</span>
+<span class="fc" id="L30">        } catch (Exception e) {</span>
+<span class="fc" id="L31">            log.error(&quot;Skipping row due to: {}&quot;, e.getMessage());</span>
+<span class="fc" id="L32">            return Optional.empty();</span>
+        }
+    }
+
+    /**
+     * Removes currency symbol, changes &lt;code&gt;,&lt;/code&gt; to &lt;code&gt;.&lt;/code&gt; and trims the given amount value from an ODS file.
+     *
+     * @param amount given amount, e.g. 1,23 €
+     * @return trimmed amount in order to be parseable as a numeric.
+     */
+    static String cleanUpAmount(String amount) {
+<span class="fc bfc" id="L43" title="All 4 branches covered.">        if (amount != null &amp;&amp; !amount.isEmpty()) {</span>
+<span class="fc" id="L44">            return amount.replace(&quot;€&quot;, &quot;&quot;).replace(&quot;,&quot;, &quot;.&quot;).trim();</span>
+        }
+<span class="fc" id="L46">        return amount;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

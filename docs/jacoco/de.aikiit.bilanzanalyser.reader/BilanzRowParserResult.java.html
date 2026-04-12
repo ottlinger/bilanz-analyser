@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BilanzRowParserResult.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">web-app</a> &gt; <a href="index.source.html" class="el_package">de.aikiit.bilanzanalyser.reader</a> &gt; <span class="el_source">BilanzRowParserResult.java</span></div><h1>BilanzRowParserResult.java</h1><pre class="source lang-java linenums">package de.aikiit.bilanzanalyser.reader;
+
+import de.aikiit.bilanzanalyser.entity.BilanzRow;
+
+import java.util.List;
+
+/**
+ * Result of parsing a spreadsheet file with
+ *
+ * @param errorCount error row count.
+ * @param rowCount   row count equals the number seen, not parsed correctly.
+ * @param rows       extracted and parsed rows. May be less than rowCount.
+ */
+public record BilanzRowParserResult(int errorCount, int rowCount, List&lt;BilanzRow&gt; rows) {
+
+<span class="fc" id="L16">    public BilanzRowParserResult {</span>
+<span class="fc bfc" id="L17" title="All 2 branches covered.">        rows = rows == null ? List.of() : List.copyOf(rows);</span>
+<span class="fc" id="L18">    }</span>
+
+    public static BilanzRowParserResult empty() {
+<span class="fc" id="L21">        return new BilanzRowParserResult(0, 0, List.of());</span>
+    }
+
+    /**
+     * Increment errorCount.
+     *
+     * @return copy with incremented value.
+     */
+    public BilanzRowParserResult withError() {
+<span class="fc" id="L30">        return new BilanzRowParserResult(errorCount + 1, rowCount, rows);</span>
+    }
+
+    /**
+     * Increment rowCount.
+     *
+     * @return copy with incremented value.
+     */
+    public BilanzRowParserResult withRow() {
+<span class="fc" id="L39">        return new BilanzRowParserResult(errorCount, rowCount + 1, rows);</span>
+    }
+
+    /**
+     * Allows adding a list of rows.
+     *
+     * @param newRows a list of rows to replace any existing rows.
+     * @return copy with added row.
+     */
+    public BilanzRowParserResult withRows(List&lt;BilanzRow&gt; newRows) {
+<span class="fc" id="L49">        return new BilanzRowParserResult(errorCount, rowCount, newRows);</span>
+    }
+
+    /**
+     * Allows adding a single row incrementally.
+     *
+     * @param row a single row.
+     * @return copy with added row.
+     */
+    public BilanzRowParserResult addRow(BilanzRow row) {
+<span class="fc" id="L59">        var newList = new java.util.ArrayList&lt;&gt;(rows);</span>
+<span class="fc" id="L60">        newList.add(row);</span>
+<span class="fc" id="L61">        return new BilanzRowParserResult(errorCount, rowCount, newList);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
