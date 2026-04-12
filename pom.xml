@@ -13,18 +13,37 @@
   <version>0.0.1-SNAPSHOT</version>
   <name>web-app</name>
   <description>Bilanz Analyser</description>
-  <url/>
+  <url>https://github.com/ottlinger/bilanz-analyser</url>
+  <organization>
+    <name>Aiki IT</name>
+    <url>https://www.aiki-it.de</url>
+  </organization>
   <licenses>
-    <license/>
+    <license>
+      <name>GNU GENERAL PUBLIC LICENSE, Version 3, 29 June 2007</name>
+      <url>https://www.gnu.org/licenses/gpl-3.0.txt</url>
+    </license>
   </licenses>
+  <issueManagement>
+    <system>GitHub issues</system>
+    <url>https://github.com/ottlinger/bilanz-analyser/issues</url>
+  </issueManagement>
   <developers>
-    <developer/>
+    <developer>
+      <id>hugohirsch</id>
+      <timezone>Europe/Berlin</timezone>
+      <roles>
+        <role>Dev</role>
+      </roles>
+      <properties>
+        <picUrl>https://avatars.githubusercontent.com/u/1323134?v=4</picUrl>
+      </properties>
+    </developer>
   </developers>
   <scm>
-    <connection/>
-    <developerConnection/>
-    <tag/>
-    <url/>
+    <connection>scm:git:git://github.com/ottlinger/bilanz-analyser.git</connection>
+    <developerConnection>scm:git:git@github.com:ottlinger/bilanz-analyser.git</developerConnection>
+    <url>https://github.com/ottlinger/bilanz-analyser</url>
   </scm>
   <properties>
     <java.version>17</java.version>
