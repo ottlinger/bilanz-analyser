@@ -30,7 +30,7 @@ class BilanzOdsReaderTest {
     void createAndParseExampleDataForSpreadsheetNameThatDoesNotExist() throws Exception {
         BilanzOdsReader reader = new BilanzOdsReader("NotExisting", Paths.get(resource.getURI()));
         assertNotNull(reader);
-        assertThat(reader.extractData().rows()).isEmpty();
+        assertThat(reader.extractData().isEmpty()).isTrue();
     }
 
 }

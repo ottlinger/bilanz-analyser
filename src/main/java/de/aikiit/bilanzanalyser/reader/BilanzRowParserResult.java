@@ -22,6 +22,15 @@ public record BilanzRowParserResult(int errorCount, int rowCount, List<BilanzRow
     }
 
     /**
+     * Check whether this result is empty.
+     *
+     * @return {@code true} if no rows and no errors are found yet.
+     */
+    public boolean isEmpty() {
+        return rows == null || rows.isEmpty() || errorCount == 0;
+    }
+
+    /**
      * Increment errorCount.
      *
      * @return copy with incremented value.

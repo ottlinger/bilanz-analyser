@@ -10,4 +10,12 @@ public record BilanzRowParserStatistic(int error, int entries, int count) {
     public static BilanzRowParserStatistic from(BilanzRowParserResult result) {
         return new BilanzRowParserStatistic(result.errorCount(), result.rows().size(), result.rowCount());
     }
+
+    /**
+     * Determine whether the statistic is empty or not.
+     * @return {@code true} if the statistic does not contain any entries.
+     */
+    public boolean isEmpty() {
+        return error == 0 && entries == 0 && count == 0;
+    }
 }
