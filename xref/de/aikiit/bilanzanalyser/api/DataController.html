@@ -8,27 +8,45 @@
 <div id="overview"><a href="../../../../../apidocs/de/aikiit/bilanzanalyser/api/DataController.html">View Javadoc</a></div><pre>
 <a class="jxr_linenumber" name="L1" href="#L1">1</a>   <strong class="jxr_keyword">package</strong> de.aikiit.bilanzanalyser.api;
 <a class="jxr_linenumber" name="L2" href="#L2">2</a>   
-<a class="jxr_linenumber" name="L3" href="#L3">3</a>   <strong class="jxr_keyword">import</strong> org.springframework.web.bind.annotation.GetMapping;
-<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <strong class="jxr_keyword">import</strong> org.springframework.web.bind.annotation.RequestMapping;
-<a class="jxr_linenumber" name="L5" href="#L5">5</a>   <strong class="jxr_keyword">import</strong> org.springframework.web.bind.annotation.RestController;
-<a class="jxr_linenumber" name="L6" href="#L6">6</a>   
-<a class="jxr_linenumber" name="L7" href="#L7">7</a>   <strong class="jxr_keyword">import</strong> java.util.List;
-<a class="jxr_linenumber" name="L8" href="#L8">8</a>   <strong class="jxr_keyword">import</strong> java.util.Random;
-<a class="jxr_linenumber" name="L9" href="#L9">9</a>   
-<a class="jxr_linenumber" name="L10" href="#L10">10</a>  @RestController
-<a class="jxr_linenumber" name="L11" href="#L11">11</a>  @RequestMapping(<span class="jxr_string">"/api"</span>)
-<a class="jxr_linenumber" name="L12" href="#L12">12</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a name="DataController" href="../../../../de/aikiit/bilanzanalyser/api/DataController.html#DataController">DataController</a> {
+<a class="jxr_linenumber" name="L3" href="#L3">3</a>   <strong class="jxr_keyword">import</strong> de.aikiit.bilanzanalyser.entity.database.repository.BilanzRowRepository;
+<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <strong class="jxr_keyword">import</strong> de.aikiit.bilanzanalyser.entity.database.repository.CategoryRepository;
+<a class="jxr_linenumber" name="L5" href="#L5">5</a>   <strong class="jxr_keyword">import</strong> de.aikiit.bilanzanalyser.entity.database.repository.PaymentRepository;
+<a class="jxr_linenumber" name="L6" href="#L6">6</a>   <strong class="jxr_keyword">import</strong> de.aikiit.bilanzanalyser.entity.database.repository.ShopRepository;
+<a class="jxr_linenumber" name="L7" href="#L7">7</a>   <strong class="jxr_keyword">import</strong> de.aikiit.bilanzanalyser.entity.database.repository.SourceRepository;
+<a class="jxr_linenumber" name="L8" href="#L8">8</a>   <strong class="jxr_keyword">import</strong> org.springframework.web.bind.annotation.GetMapping;
+<a class="jxr_linenumber" name="L9" href="#L9">9</a>   <strong class="jxr_keyword">import</strong> org.springframework.web.bind.annotation.RequestMapping;
+<a class="jxr_linenumber" name="L10" href="#L10">10</a>  <strong class="jxr_keyword">import</strong> org.springframework.web.bind.annotation.RestController;
+<a class="jxr_linenumber" name="L11" href="#L11">11</a>  
+<a class="jxr_linenumber" name="L12" href="#L12">12</a>  <strong class="jxr_keyword">import</strong> java.util.List;
 <a class="jxr_linenumber" name="L13" href="#L13">13</a>  
-<a class="jxr_linenumber" name="L14" href="#L14">14</a>      @GetMapping(<span class="jxr_string">"/dataitems"</span>)
-<a class="jxr_linenumber" name="L15" href="#L15">15</a>      <strong class="jxr_keyword">public</strong> List&lt;DataItem&gt; getDataItems() {
-<a class="jxr_linenumber" name="L16" href="#L16">16</a>          <em class="jxr_comment">// TODO replace with real data from database if done</em>
-<a class="jxr_linenumber" name="L17" href="#L17">17</a>          <strong class="jxr_keyword">return</strong> List.of(
-<a class="jxr_linenumber" name="L18" href="#L18">18</a>                  <strong class="jxr_keyword">new</strong> <a name="DataItem" href="../../../../de/aikiit/bilanzanalyser/api/DataItem.html#DataItem">DataItem</a>(<span class="jxr_string">"Apple"</span>, <strong class="jxr_keyword">new</strong> Random().nextInt(100)),
-<a class="jxr_linenumber" name="L19" href="#L19">19</a>                  <strong class="jxr_keyword">new</strong> <a name="DataItem" href="../../../../de/aikiit/bilanzanalyser/api/DataItem.html#DataItem">DataItem</a>(<span class="jxr_string">"Banana"</span>, 234),
-<a class="jxr_linenumber" name="L20" href="#L20">20</a>                  <strong class="jxr_keyword">new</strong> <a name="DataItem" href="../../../../de/aikiit/bilanzanalyser/api/DataItem.html#DataItem">DataItem</a>(<span class="jxr_string">"Tea"</span>, <strong class="jxr_keyword">new</strong> Random().nextInt(200))
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>          );
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>      }
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  }
+<a class="jxr_linenumber" name="L14" href="#L14">14</a>  @RestController
+<a class="jxr_linenumber" name="L15" href="#L15">15</a>  @RequestMapping(<span class="jxr_string">"/api"</span>)
+<a class="jxr_linenumber" name="L16" href="#L16">16</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a name="DataController" href="../../../../de/aikiit/bilanzanalyser/api/DataController.html#DataController">DataController</a> {
+<a class="jxr_linenumber" name="L17" href="#L17">17</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a name="BilanzRowRepository" href="../../../../de/aikiit/bilanzanalyser/entity/database/repository/BilanzRowRepository.html#BilanzRowRepository">BilanzRowRepository</a> bilanzRowRepository;
+<a class="jxr_linenumber" name="L18" href="#L18">18</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a name="CategoryRepository" href="../../../../de/aikiit/bilanzanalyser/entity/database/repository/CategoryRepository.html#CategoryRepository">CategoryRepository</a> categoryRepository;
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a name="PaymentRepository" href="../../../../de/aikiit/bilanzanalyser/entity/database/repository/PaymentRepository.html#PaymentRepository">PaymentRepository</a> paymentRepository;
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a name="ShopRepository" href="../../../../de/aikiit/bilanzanalyser/entity/database/repository/ShopRepository.html#ShopRepository">ShopRepository</a> shopRepository;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a name="SourceRepository" href="../../../../de/aikiit/bilanzanalyser/entity/database/repository/SourceRepository.html#SourceRepository">SourceRepository</a> sourceRepository;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>      <strong class="jxr_keyword">public</strong> <a name="DataController" href="../../../../de/aikiit/bilanzanalyser/api/DataController.html#DataController">DataController</a>(<a name="BilanzRowRepository" href="../../../../de/aikiit/bilanzanalyser/entity/database/repository/BilanzRowRepository.html#BilanzRowRepository">BilanzRowRepository</a> bilanzRowRepository, <a name="CategoryRepository" href="../../../../de/aikiit/bilanzanalyser/entity/database/repository/CategoryRepository.html#CategoryRepository">CategoryRepository</a> categoryRepository, <a name="PaymentRepository" href="../../../../de/aikiit/bilanzanalyser/entity/database/repository/PaymentRepository.html#PaymentRepository">PaymentRepository</a> paymentRepository, <a name="ShopRepository" href="../../../../de/aikiit/bilanzanalyser/entity/database/repository/ShopRepository.html#ShopRepository">ShopRepository</a> shopRepository, <a name="SourceRepository" href="../../../../de/aikiit/bilanzanalyser/entity/database/repository/SourceRepository.html#SourceRepository">SourceRepository</a> sourceRepository) {
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>          <strong class="jxr_keyword">this</strong>.bilanzRowRepository = bilanzRowRepository;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>          <strong class="jxr_keyword">this</strong>.categoryRepository = categoryRepository;
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>          <strong class="jxr_keyword">this</strong>.paymentRepository = paymentRepository;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>          <strong class="jxr_keyword">this</strong>.shopRepository = shopRepository;
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>          <strong class="jxr_keyword">this</strong>.sourceRepository = sourceRepository;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>      }
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>      @GetMapping(<span class="jxr_string">"/dataitems"</span>)
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>      <strong class="jxr_keyword">public</strong> List&lt;DataItem&gt; getDataItems() {
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>          <strong class="jxr_keyword">return</strong> List.of(<strong class="jxr_keyword">new</strong> <a name="DataItem" href="../../../../de/aikiit/bilanzanalyser/api/DataItem.html#DataItem">DataItem</a>(<span class="jxr_string">"Bilanz rows"</span>, bilanzRowRepository.count()), <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>                  <strong class="jxr_keyword">new</strong> <a name="DataItem" href="../../../../de/aikiit/bilanzanalyser/api/DataItem.html#DataItem">DataItem</a>(<span class="jxr_string">"Categories"</span>, categoryRepository.count()), <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>                  <strong class="jxr_keyword">new</strong> <a name="DataItem" href="../../../../de/aikiit/bilanzanalyser/api/DataItem.html#DataItem">DataItem</a>(<span class="jxr_string">"Payment"</span>, paymentRepository.count()), <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>                  <strong class="jxr_keyword">new</strong> <a name="DataItem" href="../../../../de/aikiit/bilanzanalyser/api/DataItem.html#DataItem">DataItem</a>(<span class="jxr_string">"Shop"</span>, shopRepository.count()), <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>                  <strong class="jxr_keyword">new</strong> <a name="DataItem" href="../../../../de/aikiit/bilanzanalyser/api/DataItem.html#DataItem">DataItem</a>(<span class="jxr_string">"Source"</span>, sourceRepository.count())
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>                  <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>          );
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>      }
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  }
 </pre>
 <hr/>
 <div id="footer">© 2026 <a href="https://www.aiki-it.de">AIKI IT</a></div>
