@@ -22,7 +22,7 @@ import java.util.List;
 
 @Log4j2
 @RestController
-public class UploadController {
+public final class UploadController {
     private static final String UPLOAD_DIR = "uploads-bilanz-analyser";
     private static final List<String> RELEVANT_WORKSHEETS = List.of("Ausgaben", "Einnahmen");
 

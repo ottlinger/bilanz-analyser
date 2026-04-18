@@ -22,12 +22,12 @@ import static de.aikiit.bilanzanalyser.reader.BilanzRowParser.fromOdfTableRow;
 @Data
 @AllArgsConstructor
 @Log4j2
-public class BilanzOdsReader {
+public final class BilanzOdsReader {
 
     private String tableName;
     private Path source;
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         try (OdfSpreadsheetDocument document = OdfSpreadsheetDocument.loadDocument(new File("/tmp/example.ods"))) {
             OdfTable table = document.getTableByName("Ausgaben");
             log.info("{} lines to read", table.getRowCount());

@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 @Service
-public class UploadAnalysisService {
+public final class UploadAnalysisService {
 
     /**
      * Parses and analyses a given file.

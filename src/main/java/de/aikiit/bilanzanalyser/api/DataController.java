@@ -9,7 +9,7 @@ import java.util.Random;
 
 @RestController
 @RequestMapping("/api")
-public class DataController {
+public final class DataController {
 
     @GetMapping("/dataitems")
     public List<DataItem> getDataItems() {
