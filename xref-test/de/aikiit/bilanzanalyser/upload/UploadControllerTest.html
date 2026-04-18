@@ -65,7 +65,7 @@
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>                  <span class="jxr_string">"dummy content"</span>.getBytes()
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>          );
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>  
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>          when(uploadAnalysisService.processFile(any(Path.<strong class="jxr_keyword">class</strong>), eq(<span class="jxr_string">"Ausgaben"</span>))).thenReturn(<strong class="jxr_keyword">new</strong> BilanzRowParserResult(1,42, Collections.emptyList()));
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>          when(uploadAnalysisService.processFile(eq(<span class="jxr_string">"Ausgaben"</span>), any(Path.<strong class="jxr_keyword">class</strong>))).thenReturn(<strong class="jxr_keyword">new</strong> BilanzRowParserResult(1,42, Collections.emptyList()));
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>          ModelAndView mav = uploadController.handleFileUpload(file, <span class="jxr_string">"Ausgaben"</span>);
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>  
@@ -74,7 +74,7 @@
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>          assertTrue(((String) mav.getModel().get(<span class="jxr_string">"sucmessage"</span>)).contains(<span class="jxr_string">"42"</span>));
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>          assertTrue(mav.getModel().containsKey(<span class="jxr_string">"statistic"</span>));
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>  
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>          verify(uploadAnalysisService, times(1)).processFile(any(Path.<strong class="jxr_keyword">class</strong>), eq(<span class="jxr_string">"Ausgaben"</span>));
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>          verify(uploadAnalysisService, times(1)).processFile(eq(<span class="jxr_string">"Ausgaben"</span>), any(Path.<strong class="jxr_keyword">class</strong>));
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>      }
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>  
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>      @Test
@@ -133,13 +133,13 @@
 <a class="jxr_linenumber" name="L125" href="#L125">125</a>                 <span class="jxr_string">"dummy content"</span>.getBytes()
 <a class="jxr_linenumber" name="L126" href="#L126">126</a>         );
 <a class="jxr_linenumber" name="L127" href="#L127">127</a> 
-<a class="jxr_linenumber" name="L128" href="#L128">128</a>         when(uploadAnalysisService.processFile(any(Path.<strong class="jxr_keyword">class</strong>), eq(<span class="jxr_string">"Ausgaben"</span>)))
+<a class="jxr_linenumber" name="L128" href="#L128">128</a>         when(uploadAnalysisService.processFile(eq(<span class="jxr_string">"Ausgaben"</span>), any(Path.<strong class="jxr_keyword">class</strong>)))
 <a class="jxr_linenumber" name="L129" href="#L129">129</a>                 .thenThrow(<strong class="jxr_keyword">new</strong> IOException(<span class="jxr_string">"Processing error"</span>));
 <a class="jxr_linenumber" name="L130" href="#L130">130</a> 
 <a class="jxr_linenumber" name="L131" href="#L131">131</a>         ModelAndView mav = uploadController.handleFileUpload(file, <span class="jxr_string">"Ausgaben"</span>);
 <a class="jxr_linenumber" name="L132" href="#L132">132</a> 
 <a class="jxr_linenumber" name="L133" href="#L133">133</a>         assertTrue(((String) mav.getModel().get(<span class="jxr_string">"message"</span>)).contains(<span class="jxr_string">"Upload failed"</span>));
-<a class="jxr_linenumber" name="L134" href="#L134">134</a>         verify(uploadAnalysisService, times(1)).processFile(any(Path.<strong class="jxr_keyword">class</strong>), eq(<span class="jxr_string">"Ausgaben"</span>));
+<a class="jxr_linenumber" name="L134" href="#L134">134</a>         verify(uploadAnalysisService, times(1)).processFile(eq(<span class="jxr_string">"Ausgaben"</span>), any(Path.<strong class="jxr_keyword">class</strong>));
 <a class="jxr_linenumber" name="L135" href="#L135">135</a>     }
 <a class="jxr_linenumber" name="L136" href="#L136">136</a> }
 </pre>
