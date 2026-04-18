@@ -57,7 +57,7 @@ class UploadControllerTest {
                 "dummy content".getBytes()
         );
 
-        when(uploadAnalysisService.processFile(any(Path.class), eq("Ausgaben"))).thenReturn(new BilanzRowParserResult(1,42, Collections.emptyList()));
+        when(uploadAnalysisService.processFile(eq("Ausgaben"), any(Path.class))).thenReturn(new BilanzRowParserResult(1,42, Collections.emptyList()));
 
         ModelAndView mav = uploadController.handleFileUpload(file, "Ausgaben");
 
@@ -66,7 +66,7 @@ class UploadControllerTest {
         assertTrue(((String) mav.getModel().get("sucmessage")).contains("42"));
         assertTrue(mav.getModel().containsKey("statistic"));
 
-        verify(uploadAnalysisService, times(1)).processFile(any(Path.class), eq("Ausgaben"));
+        verify(uploadAnalysisService, times(1)).processFile(eq("Ausgaben"), any(Path.class));
     }
 
     @Test
@@ -125,12 +125,12 @@ class UploadControllerTest {
                 "dummy content".getBytes()
         );
 
-        when(uploadAnalysisService.processFile(any(Path.class), eq("Ausgaben")))
+        when(uploadAnalysisService.processFile(eq("Ausgaben"), any(Path.class)))
                 .thenThrow(new IOException("Processing error"));
 
         ModelAndView mav = uploadController.handleFileUpload(file, "Ausgaben");
 
         assertTrue(((String) mav.getModel().get("message")).contains("Upload failed"));
-        verify(uploadAnalysisService, times(1)).processFile(any(Path.class), eq("Ausgaben"));
+        verify(uploadAnalysisService, times(1)).processFile(eq("Ausgaben"), any(Path.class));
     }
 }

@@ -79,7 +79,7 @@ public class UploadController {
             file.transferTo(destination);
 
             // Process rows and cleanup afterwards
-            BilanzRowParserResult result = uploadAnalysisService.processFile(destination, selectedWorksheet);
+            BilanzRowParserResult result = uploadAnalysisService.processFile(selectedWorksheet, destination);
             Files.delete(destination);
 
             mav.addObject("sucmessage", "File uploaded successfully. Processed " + result.rowCount() + " rows in table " + escapedSelectedWorksheet);

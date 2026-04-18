@@ -57,7 +57,7 @@ class UploadControllerITest {
                 "dummy content".getBytes()
         );
 
-        when(uploadAnalysisService.processFile(any(Path.class), eq("Ausgaben"))).thenReturn(new BilanzRowParserResult(1, 2, Collections.emptyList()));
+        when(uploadAnalysisService.processFile(eq("Ausgaben"), any(Path.class))).thenReturn(new BilanzRowParserResult(1, 2, Collections.emptyList()));
 
         mockMvc.perform(multipart("/upload")
                         .file(file)
@@ -69,7 +69,7 @@ class UploadControllerITest {
                 .andExpect(model().attributeExists("worksheets"))
                 .andExpect(model().attribute("selectedWorksheet", "Ausgaben"));
 
-        verify(uploadAnalysisService, times(1)).processFile(any(Path.class), eq("Ausgaben"));
+        verify(uploadAnalysisService, times(1)).processFile(eq("Ausgaben"), any(Path.class));
     }
 
     @Test
@@ -137,7 +137,7 @@ class UploadControllerITest {
                 "dummy content".getBytes()
         );
 
-        when(uploadAnalysisService.processFile(any(Path.class), eq("Ausgaben")))
+        when(uploadAnalysisService.processFile(eq("Ausgaben"), any(Path.class)))
                 .thenThrow(new IOException("Processing error"));
 
         mockMvc.perform(multipart("/upload")
@@ -147,6 +147,6 @@ class UploadControllerITest {
                 .andExpect(model().attributeExists("message"))
                 .andExpect(model().attribute("message", org.hamcrest.Matchers.containsString("Upload failed")));
 
-        verify(uploadAnalysisService, times(1)).processFile(any(Path.class), eq("Ausgaben"));
+        verify(uploadAnalysisService, times(1)).processFile(eq("Ausgaben"), any(Path.class));
     }
 }
