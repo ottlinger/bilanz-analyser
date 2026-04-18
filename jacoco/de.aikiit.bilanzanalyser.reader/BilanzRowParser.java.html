@@ -12,9 +12,9 @@ import java.util.Optional;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 <span class="fc" id="L14">@Log4j2</span>
-public class BilanzRowParser {
+public final class BilanzRowParser {
 
-    public static Optional&lt;BilanzRow&gt; fromOdfTableRow(OdfTableRow row) {
+    public static Optional&lt;BilanzRow&gt; fromOdfTableRow(final OdfTableRow row) {
         try {
 <span class="fc" id="L19">            BilanzRow bilanzRow = BilanzRow.builder() //</span>
                     // expected format: yyyy-MM-dd

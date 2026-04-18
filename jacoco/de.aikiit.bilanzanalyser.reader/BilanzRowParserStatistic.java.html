@@ -10,5 +10,13 @@
     public static BilanzRowParserStatistic from(BilanzRowParserResult result) {
 <span class="fc" id="L11">        return new BilanzRowParserStatistic(result.errorCount(), result.rows().size(), result.rowCount());</span>
     }
+
+    /**
+     * Determine whether the statistic is empty or not.
+     * @return {@code true} if the statistic does not contain any entries.
+     */
+    public boolean isEmpty() {
+<span class="pc bpc" id="L19" title="5 of 6 branches missed.">        return error == 0 &amp;&amp; entries == 0 &amp;&amp; count == 0;</span>
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
