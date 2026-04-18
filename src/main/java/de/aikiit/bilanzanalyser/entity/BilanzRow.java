@@ -15,4 +15,6 @@ public class BilanzRow {
     private String shop;
     private String payment;
     private String category;
+    @Builder.Default
+    private String source = "Ausgaben";
 }
