@@ -31,15 +31,16 @@ class DataControllerITest {
         List<DataItem> result = objectMapper.readValue(response, new TypeReference<>() {
         });
 
-        assertThat(result).hasSize(3);
+        assertThat(result).hasSize(5);
 
         // structure checks
         assertThat(result.get(0).name()).isNotBlank();
         assertThat(result.get(0).value()).isGreaterThanOrEqualTo(0);
 
-        // deterministic check, rest is random
-        assertThat(result).anyMatch(item -> item.name().equals("Banana") && item.value() == 234);
-        assertThat(result).anyMatch(item -> item.name().equals("Apple"));
-        assertThat(result).anyMatch(item -> item.name().equals("Tea"));
+        assertThat(result).anyMatch(item -> item.name().equals("Bilanz rows"));
+        assertThat(result).anyMatch(item -> item.name().equals("Categories"));
+        assertThat(result).anyMatch(item -> item.name().equals("Payment"));
+        assertThat(result).anyMatch(item -> item.name().equals("Shop"));
+        assertThat(result).anyMatch(item -> item.name().equals("Source"));
     }
 }

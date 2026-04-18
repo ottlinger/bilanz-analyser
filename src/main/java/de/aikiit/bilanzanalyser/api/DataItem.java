@@ -1,4 +1,4 @@
 package de.aikiit.bilanzanalyser.api;
 
-public record DataItem(String name, int value) {
+public record DataItem(String name, long value) {
 }
