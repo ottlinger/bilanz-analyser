@@ -22,12 +22,21 @@ public record BilanzRowParserResult(int errorCount, int rowCount, List&lt;Bilanz
     }
 
     /**
+     * Check whether this result is empty.
+     *
+     * @return {@code true} if no rows and no errors are found yet.
+     */
+    public boolean isEmpty() {
+<span class="pc bpc" id="L30" title="4 of 6 branches missed.">        return rows == null || rows.isEmpty() || errorCount == 0;</span>
+    }
+
+    /**
      * Increment errorCount.
      *
      * @return copy with incremented value.
      */
     public BilanzRowParserResult withError() {
-<span class="fc" id="L30">        return new BilanzRowParserResult(errorCount + 1, rowCount, rows);</span>
+<span class="fc" id="L39">        return new BilanzRowParserResult(errorCount + 1, rowCount, rows);</span>
     }
 
     /**
@@ -36,7 +45,7 @@ public record BilanzRowParserResult(int errorCount, int rowCount, List&lt;Bilanz
      * @return copy with incremented value.
      */
     public BilanzRowParserResult withRow() {
-<span class="fc" id="L39">        return new BilanzRowParserResult(errorCount, rowCount + 1, rows);</span>
+<span class="fc" id="L48">        return new BilanzRowParserResult(errorCount, rowCount + 1, rows);</span>
     }
 
     /**
@@ -46,7 +55,7 @@ public record BilanzRowParserResult(int errorCount, int rowCount, List&lt;Bilanz
      * @return copy with added row.
      */
     public BilanzRowParserResult withRows(List&lt;BilanzRow&gt; newRows) {
-<span class="fc" id="L49">        return new BilanzRowParserResult(errorCount, rowCount, newRows);</span>
+<span class="fc" id="L58">        return new BilanzRowParserResult(errorCount, rowCount, newRows);</span>
     }
 
     /**
@@ -56,9 +65,9 @@ public record BilanzRowParserResult(int errorCount, int rowCount, List&lt;Bilanz
      * @return copy with added row.
      */
     public BilanzRowParserResult addRow(BilanzRow row) {
-<span class="fc" id="L59">        var newList = new java.util.ArrayList&lt;&gt;(rows);</span>
-<span class="fc" id="L60">        newList.add(row);</span>
-<span class="fc" id="L61">        return new BilanzRowParserResult(errorCount, rowCount, newList);</span>
+<span class="fc" id="L68">        var newList = new java.util.ArrayList&lt;&gt;(rows);</span>
+<span class="fc" id="L69">        newList.add(row);</span>
+<span class="fc" id="L70">        return new BilanzRowParserResult(errorCount, rowCount, newList);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
