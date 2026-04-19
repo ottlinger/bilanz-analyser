@@ -82,6 +82,8 @@ public final class UploadController {
             // Process rows and cleanup afterwards
             BilanzRowParserResult result = uploadAnalysisService.processFile(selectedWorksheet, destination);
             Files.delete(destination);
+            // flush to DB asynchronously
+            uploadAnalysisService.flushDataIntoDatabase(result);
 
             mav.addObject("sucmessage", "File uploaded successfully. Processed " + result.rowCount() + " rows in table " + escapedSelectedWorksheet);
             mav.addObject("statistic", BilanzRowParserStatistic.from(result));
