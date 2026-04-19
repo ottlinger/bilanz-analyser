@@ -74,6 +74,27 @@ public class UploadAnalysisService {
         log.info("Successfully flushed data into database in {} ms.", (System.nanoTime() - start) / 1_000_000);
     }
 
+    /**
+     * Retrieves an entity by name or creates and persists it if it does not exist,
+     * assuming that the underlying entity enforces uniqueness with a database constraint on the column 'name'.
+     * <p>
+     * This method implements a "get-or-create" pattern with basic concurrency handling:
+     * it first attempts to find an existing entity using the provided {@code finder}.
+     * If none is found, it invokes the {@code creator} to create and persist a new entity.
+     * <p>
+     * In case of a concurrent insert (e.g. due to a unique constraint on the name),
+     * a {@link DataIntegrityViolationException} may be thrown during creation. In that case,
+     * the method retries the lookup and returns the entity inserted by the concurrent transaction.
+     * <p>
+     * The input name is normalized using {@link #replaceIfEmpty(String)} before lookup and creation.
+     *
+     * @param rawName the original name value; may be {@code null} or blank
+     * @param finder  function used to look up an existing entity by normalized name
+     * @param creator function that creates and persists a new entity for the normalized name;
+     *                must return a fully initialized and saved entity
+     * @param <T>     the entity type
+     * @return an existing or newly created entity corresponding to the given name.
+     */
     @Transactional
     <T> T getOrCreate(String rawName, Function<String, Optional<T>> finder, Function<String, T> creator) {
         String name = replaceIfEmpty(rawName);
