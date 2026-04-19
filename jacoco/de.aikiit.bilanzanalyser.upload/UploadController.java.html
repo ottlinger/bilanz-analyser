@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UploadController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ba-web-app</a> &gt; <a href="index.source.html" class="el_package">de.aikiit.bilanzanalyser.upload</a> &gt; <span class="el_source">UploadController.java</span></div><h1>UploadController.java</h1><pre class="source lang-java linenums">package de.aikiit.bilanzanalyser.upload;
 
-import de.aikiit.bilanzanalyser.entity.database.repository.SourceRepository;
 import de.aikiit.bilanzanalyser.reader.BilanzRowParserResult;
 import de.aikiit.bilanzanalyser.reader.BilanzRowParserStatistic;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,9 +17,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
-<span class="fc" id="L24">@Log4j2</span>
+<span class="fc" id="L21">@Log4j2</span>
 @RestController
 public final class UploadController {
     private static final String UPLOAD_DIR = &quot;uploads-bilanz-analyser&quot;;
@@ -32,66 +29,66 @@ public final class UploadController {
     @Value(&quot;${java.io.tmpdir}&quot;)
     private String tempDir;
 
-<span class="fc" id="L35">    public UploadController(UploadAnalysisService uploadAnalysisService, SourceService sourceService) {</span>
-<span class="fc" id="L36">        this.uploadAnalysisService = uploadAnalysisService;</span>
-<span class="fc" id="L37">        this.sourceService = sourceService;</span>
-<span class="fc" id="L38">    }</span>
+<span class="fc" id="L32">    public UploadController(UploadAnalysisService uploadAnalysisService, SourceService sourceService) {</span>
+<span class="fc" id="L33">        this.uploadAnalysisService = uploadAnalysisService;</span>
+<span class="fc" id="L34">        this.sourceService = sourceService;</span>
+<span class="fc" id="L35">    }</span>
 
     @GetMapping(&quot;/upload&quot;)
     public ModelAndView upload() {
-<span class="fc" id="L42">        ModelAndView mav = new ModelAndView(&quot;upload&quot;);</span>
-<span class="fc" id="L43">        mav.addObject(&quot;worksheets&quot;, sourceService.getSources());</span>
-<span class="fc" id="L44">        mav.addObject(&quot;selectedWorksheet&quot;, &quot;Ausgaben&quot;);</span>
-<span class="fc" id="L45">        return mav;</span>
+<span class="fc" id="L39">        ModelAndView mav = new ModelAndView(&quot;upload&quot;);</span>
+<span class="fc" id="L40">        mav.addObject(&quot;worksheets&quot;, sourceService.getSources());</span>
+<span class="fc" id="L41">        mav.addObject(&quot;selectedWorksheet&quot;, &quot;Ausgaben&quot;);</span>
+<span class="fc" id="L42">        return mav;</span>
     }
 
     @PostMapping(&quot;/upload&quot;)
     public ModelAndView handleFileUpload(@RequestParam(&quot;file&quot;) MultipartFile file, @RequestParam(&quot;selectedWorksheet&quot;) String selectedWorksheet) {
 
         // Create ModelAndView for the &quot;upload&quot; view
-<span class="fc" id="L52">        ModelAndView mav = new ModelAndView(&quot;upload&quot;);</span>
-<span class="fc" id="L53">        mav.addObject(&quot;worksheets&quot;, sourceService.getSources());</span>
+<span class="fc" id="L49">        ModelAndView mav = new ModelAndView(&quot;upload&quot;);</span>
+<span class="fc" id="L50">        mav.addObject(&quot;worksheets&quot;, sourceService.getSources());</span>
 
         // prevent mingling with selected worksheet and properly escape user-provided value
-<span class="fc bfc" id="L56" title="All 2 branches covered.">        if (!sourceService.getSources().contains(selectedWorksheet)) {</span>
-<span class="fc" id="L57">            mav.addObject(&quot;message&quot;, &quot;Invalid worksheet selected&quot;);</span>
-<span class="fc" id="L58">            return mav;</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        if (!sourceService.getSources().contains(selectedWorksheet)) {</span>
+<span class="fc" id="L54">            mav.addObject(&quot;message&quot;, &quot;Invalid worksheet selected&quot;);</span>
+<span class="fc" id="L55">            return mav;</span>
         }
-<span class="fc" id="L60">        String escapedSelectedWorksheet = HtmlUtils.htmlEscape(selectedWorksheet);</span>
-<span class="fc" id="L61">        mav.addObject(&quot;selectedWorksheet&quot;, escapedSelectedWorksheet);</span>
+<span class="fc" id="L57">        String escapedSelectedWorksheet = HtmlUtils.htmlEscape(selectedWorksheet);</span>
+<span class="fc" id="L58">        mav.addObject(&quot;selectedWorksheet&quot;, escapedSelectedWorksheet);</span>
 
-<span class="fc bfc" id="L63" title="All 2 branches covered.">        if (file.isEmpty()) {</span>
-<span class="fc" id="L64">            mav.addObject(&quot;message&quot;, &quot;Please select a file to upload&quot;);</span>
-<span class="fc" id="L65">            return mav;</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">        if (file.isEmpty()) {</span>
+<span class="fc" id="L61">            mav.addObject(&quot;message&quot;, &quot;Please select a file to upload&quot;);</span>
+<span class="fc" id="L62">            return mav;</span>
         }
 
-<span class="fc bfc" id="L68" title="All 2 branches covered.">        if (!&quot;application/vnd.oasis.opendocument.spreadsheet&quot;.equals(file.getContentType())) {</span>
-<span class="fc" id="L69">            mav.addObject(&quot;message&quot;, &quot;Only ODS spreadsheet files allowed&quot;);</span>
-<span class="fc" id="L70">            return mav;</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        if (!&quot;application/vnd.oasis.opendocument.spreadsheet&quot;.equals(file.getContentType())) {</span>
+<span class="fc" id="L66">            mav.addObject(&quot;message&quot;, &quot;Only ODS spreadsheet files allowed&quot;);</span>
+<span class="fc" id="L67">            return mav;</span>
         }
 
         try {
             // Create directory if not exists under current temp base dir
-<span class="fc" id="L75">            Path uploadDir = Paths.get(tempDir + File.separatorChar + UPLOAD_DIR);</span>
-<span class="fc" id="L76">            Files.createDirectories(uploadDir);</span>
+<span class="fc" id="L72">            Path uploadDir = Paths.get(tempDir + File.separatorChar + UPLOAD_DIR);</span>
+<span class="fc" id="L73">            Files.createDirectories(uploadDir);</span>
 
             // Save file
-<span class="fc" id="L79">            Path destination = Paths.get(uploadDir.toString(), System.currentTimeMillis() + &quot;.ods&quot;);</span>
-<span class="fc" id="L80">            file.transferTo(destination);</span>
+<span class="fc" id="L76">            Path destination = Paths.get(uploadDir.toString(), System.currentTimeMillis() + &quot;.ods&quot;);</span>
+<span class="fc" id="L77">            file.transferTo(destination);</span>
 
             // Process rows and cleanup afterwards
-<span class="fc" id="L83">            BilanzRowParserResult result = uploadAnalysisService.processFile(selectedWorksheet, destination);</span>
-<span class="fc" id="L84">            Files.delete(destination);</span>
+<span class="fc" id="L80">            BilanzRowParserResult result = uploadAnalysisService.processFile(selectedWorksheet, destination);</span>
+<span class="fc" id="L81">            Files.delete(destination);</span>
             // flush to DB asynchronously
-<span class="fc" id="L86">            uploadAnalysisService.flushDataIntoDatabase(result);</span>
+<span class="fc" id="L83">            uploadAnalysisService.flushDataIntoDatabase(result);</span>
 
-<span class="fc" id="L88">            mav.addObject(&quot;sucmessage&quot;, &quot;File uploaded successfully. Processed &quot; + result.rowCount() + &quot; rows in table &quot; + escapedSelectedWorksheet);</span>
-<span class="fc" id="L89">            mav.addObject(&quot;statistic&quot;, BilanzRowParserStatistic.from(result));</span>
-<span class="fc" id="L90">        } catch (IOException e) {</span>
-<span class="fc" id="L91">            log.error(e.getMessage());</span>
-<span class="fc" id="L92">            mav.addObject(&quot;message&quot;, &quot;Upload failed: &quot; + e.getMessage());</span>
-<span class="fc" id="L93">        }</span>
-<span class="fc" id="L94">        return mav;</span>
+<span class="fc" id="L85">            mav.addObject(&quot;sucmessage&quot;, &quot;File uploaded successfully. Processed &quot; + result.rowCount() + &quot; rows in table &quot; + escapedSelectedWorksheet);</span>
+<span class="fc" id="L86">            mav.addObject(&quot;statistic&quot;, BilanzRowParserStatistic.from(result));</span>
+<span class="fc" id="L87">        } catch (IOException e) {</span>
+<span class="fc" id="L88">            log.error(e.getMessage());</span>
+<span class="fc" id="L89">            mav.addObject(&quot;message&quot;, &quot;Upload failed: &quot; + e.getMessage());</span>
+<span class="fc" id="L90">        }</span>
+<span class="fc" id="L91">        return mav;</span>
     }
 
 }
