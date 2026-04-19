@@ -82,14 +82,16 @@ public final class UploadController {
             // Process rows and cleanup afterwards
 <span class="fc" id="L83">            BilanzRowParserResult result = uploadAnalysisService.processFile(selectedWorksheet, destination);</span>
 <span class="fc" id="L84">            Files.delete(destination);</span>
+            // flush to DB asynchronously
+<span class="fc" id="L86">            uploadAnalysisService.flushDataIntoDatabase(result);</span>
 
-<span class="fc" id="L86">            mav.addObject(&quot;sucmessage&quot;, &quot;File uploaded successfully. Processed &quot; + result.rowCount() + &quot; rows in table &quot; + escapedSelectedWorksheet);</span>
-<span class="fc" id="L87">            mav.addObject(&quot;statistic&quot;, BilanzRowParserStatistic.from(result));</span>
-<span class="fc" id="L88">        } catch (IOException e) {</span>
-<span class="fc" id="L89">            log.error(e.getMessage());</span>
-<span class="fc" id="L90">            mav.addObject(&quot;message&quot;, &quot;Upload failed: &quot; + e.getMessage());</span>
-<span class="fc" id="L91">        }</span>
-<span class="fc" id="L92">        return mav;</span>
+<span class="fc" id="L88">            mav.addObject(&quot;sucmessage&quot;, &quot;File uploaded successfully. Processed &quot; + result.rowCount() + &quot; rows in table &quot; + escapedSelectedWorksheet);</span>
+<span class="fc" id="L89">            mav.addObject(&quot;statistic&quot;, BilanzRowParserStatistic.from(result));</span>
+<span class="fc" id="L90">        } catch (IOException e) {</span>
+<span class="fc" id="L91">            log.error(e.getMessage());</span>
+<span class="fc" id="L92">            mav.addObject(&quot;message&quot;, &quot;Upload failed: &quot; + e.getMessage());</span>
+<span class="fc" id="L93">        }</span>
+<span class="fc" id="L94">        return mav;</span>
     }
 
 }

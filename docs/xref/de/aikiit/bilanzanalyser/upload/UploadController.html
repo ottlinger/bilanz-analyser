@@ -90,17 +90,19 @@
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>              <em class="jxr_comment">// Process rows and cleanup afterwards</em>
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>              <a name="BilanzRowParserResult" href="../../../../de/aikiit/bilanzanalyser/reader/BilanzRowParserResult.html#BilanzRowParserResult">BilanzRowParserResult</a> result = uploadAnalysisService.processFile(selectedWorksheet, destination);
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>              Files.delete(destination);
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>  
-<a class="jxr_linenumber" name="L86" href="#L86">86</a>              mav.addObject(<span class="jxr_string">"sucmessage"</span>, <span class="jxr_string">"File uploaded successfully. Processed "</span> + result.rowCount() + <span class="jxr_string">" rows in table "</span> + escapedSelectedWorksheet);
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>              mav.addObject(<span class="jxr_string">"statistic"</span>, BilanzRowParserStatistic.from(result));
-<a class="jxr_linenumber" name="L88" href="#L88">88</a>          } <strong class="jxr_keyword">catch</strong> (IOException e) {
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>              log.error(e.getMessage());
-<a class="jxr_linenumber" name="L90" href="#L90">90</a>              mav.addObject(<span class="jxr_string">"message"</span>, <span class="jxr_string">"Upload failed: "</span> + e.getMessage());
-<a class="jxr_linenumber" name="L91" href="#L91">91</a>          }
-<a class="jxr_linenumber" name="L92" href="#L92">92</a>          <strong class="jxr_keyword">return</strong> mav;
-<a class="jxr_linenumber" name="L93" href="#L93">93</a>      }
-<a class="jxr_linenumber" name="L94" href="#L94">94</a>  
-<a class="jxr_linenumber" name="L95" href="#L95">95</a>  }
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>              <em class="jxr_comment">// flush to DB asynchronously</em>
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>              uploadAnalysisService.flushDataIntoDatabase(result);
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>  
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>              mav.addObject(<span class="jxr_string">"sucmessage"</span>, <span class="jxr_string">"File uploaded successfully. Processed "</span> + result.rowCount() + <span class="jxr_string">" rows in table "</span> + escapedSelectedWorksheet);
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>              mav.addObject(<span class="jxr_string">"statistic"</span>, BilanzRowParserStatistic.from(result));
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>          } <strong class="jxr_keyword">catch</strong> (IOException e) {
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>              log.error(e.getMessage());
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>              mav.addObject(<span class="jxr_string">"message"</span>, <span class="jxr_string">"Upload failed: "</span> + e.getMessage());
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>          }
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>          <strong class="jxr_keyword">return</strong> mav;
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>      }
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>  
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>  }
 </pre>
 <hr/>
 <div id="footer">© 2026 <a href="https://www.aiki-it.de">AIKI IT</a></div>
