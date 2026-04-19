@@ -61,7 +61,7 @@ public class UploadAnalysisService {
             BilanzRowEntity entity = new BilanzRowEntity();
             entity.setDate(row.getDate());
             entity.setAmount(row.getAmount());
-            entity.setDescription(row.getDescription());
+            entity.setDescription(replaceIfEmpty(row.getDescription()));
             entity.setShop(getOrCreateShop(row.getShop()));
             entity.setPayment(getOrCreatePayment(row.getPayment()));
             entity.setCategory(getOrCreateCategory(row.getCategory()));
@@ -77,11 +77,11 @@ public class UploadAnalysisService {
         return shopRepository.findByName(name).orElseGet(() -> {
             try {
                 ShopEntity entity = new ShopEntity();
-                entity.setName(name);
+                entity.setName(replaceIfEmpty(name));
                 return shopRepository.save(entity);
             } catch (DataIntegrityViolationException e) {
                 // someone else inserted it concurrently
-                return shopRepository.findByName(name).orElseThrow();
+                return shopRepository.findByName(replaceIfEmpty(name)).orElseThrow();
             }
         });
     }
@@ -91,11 +91,11 @@ public class UploadAnalysisService {
         return paymentRepository.findByName(name).orElseGet(() -> {
             try {
                 PaymentEntity entity = new PaymentEntity();
-                entity.setName(name);
+                entity.setName(replaceIfEmpty(name));
                 return paymentRepository.save(entity);
             } catch (DataIntegrityViolationException e) {
                 // someone else inserted it concurrently
-                return paymentRepository.findByName(name).orElseThrow();
+                return paymentRepository.findByName(replaceIfEmpty(name)).orElseThrow();
             }
         });
     }
@@ -105,11 +105,11 @@ public class UploadAnalysisService {
         return categoryRepository.findByName(name).orElseGet(() -> {
             try {
                 CategoryEntity entity = new CategoryEntity();
-                entity.setName(name);
+                entity.setName(replaceIfEmpty(name));
                 return categoryRepository.save(entity);
             } catch (DataIntegrityViolationException e) {
                 // someone else inserted it concurrently
-                return categoryRepository.findByName(name).orElseThrow();
+                return categoryRepository.findByName(replaceIfEmpty(name)).orElseThrow();
             }
         });
     }
@@ -126,6 +126,10 @@ public class UploadAnalysisService {
                 return sourceRepository.findByName(name).orElseThrow();
             }
         });
+    }
+
+    String replaceIfEmpty(String value) {
+        return value == null || value.isBlank() ? "<empty>" : value.trim();
     }
 
 }
