@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Optional;
+import java.util.function.Function;
 
 @Service
 @Log4j2
@@ -73,58 +75,52 @@ public class UploadAnalysisService {
     }
 
     @Transactional
-    ShopEntity getOrCreateShop(String name) {
-        return shopRepository.findByName(name).orElseGet(() -> {
+    <T> T getOrCreate(String rawName, Function<String, Optional<T>> finder, Function<String, T> creator) {
+        String name = replaceIfEmpty(rawName);
+
+        return finder.apply(name).orElseGet(() -> {
             try {
-                ShopEntity entity = new ShopEntity();
-                entity.setName(replaceIfEmpty(name));
-                return shopRepository.save(entity);
+                return creator.apply(name);
             } catch (DataIntegrityViolationException e) {
                 // someone else inserted it concurrently
-                return shopRepository.findByName(replaceIfEmpty(name)).orElseThrow();
+                return finder.apply(name).orElseThrow();
             }
+        });
+    }
+
+    @Transactional
+    ShopEntity getOrCreateShop(String name) {
+        return getOrCreate(name, shopRepository::findByName, n -> {
+            ShopEntity e = new ShopEntity();
+            e.setName(n);
+            return shopRepository.save(e);
         });
     }
 
     @Transactional
     PaymentEntity getOrCreatePayment(String name) {
-        return paymentRepository.findByName(name).orElseGet(() -> {
-            try {
-                PaymentEntity entity = new PaymentEntity();
-                entity.setName(replaceIfEmpty(name));
-                return paymentRepository.save(entity);
-            } catch (DataIntegrityViolationException e) {
-                // someone else inserted it concurrently
-                return paymentRepository.findByName(replaceIfEmpty(name)).orElseThrow();
-            }
+        return getOrCreate(name, paymentRepository::findByName, n -> {
+            PaymentEntity e = new PaymentEntity();
+            e.setName(n);
+            return paymentRepository.save(e);
         });
     }
 
     @Transactional
     CategoryEntity getOrCreateCategory(String name) {
-        return categoryRepository.findByName(name).orElseGet(() -> {
-            try {
-                CategoryEntity entity = new CategoryEntity();
-                entity.setName(replaceIfEmpty(name));
-                return categoryRepository.save(entity);
-            } catch (DataIntegrityViolationException e) {
-                // someone else inserted it concurrently
-                return categoryRepository.findByName(replaceIfEmpty(name)).orElseThrow();
-            }
+        return getOrCreate(name, categoryRepository::findByName, n -> {
+            CategoryEntity e = new CategoryEntity();
+            e.setName(n);
+            return categoryRepository.save(e);
         });
     }
 
     @Transactional
     SourceEntity getOrCreateSource(String name) {
-        return sourceRepository.findByName(name).orElseGet(() -> {
-            try {
-                SourceEntity entity = new SourceEntity();
-                entity.setName(name);
-                return sourceRepository.save(entity);
-            } catch (DataIntegrityViolationException e) {
-                // someone else inserted it concurrently
-                return sourceRepository.findByName(name).orElseThrow();
-            }
+        return getOrCreate(name, sourceRepository::findByName, n -> {
+            SourceEntity e = new SourceEntity();
+            e.setName(n); // no replaceIfEmpty here before, but now consistent
+            return sourceRepository.save(e);
         });
     }
 
