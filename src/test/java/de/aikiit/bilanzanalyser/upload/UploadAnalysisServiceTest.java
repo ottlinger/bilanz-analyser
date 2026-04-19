@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -79,15 +80,16 @@ class UploadAnalysisServiceTest {
 
     @Test
     void getOrCreatePayment_shouldHandleConcurrentInsert() {
-        when(paymentRepository.findByName("Card")).thenReturn(Optional.empty())  // first call
+        when(paymentRepository.findByName("Cards")).thenReturn(Optional.empty())  // first call
                 .thenReturn(Optional.of(new PaymentEntity())); // retry
 
         when(paymentRepository.save(any())).thenThrow(DataIntegrityViolationException.class);
 
-        PaymentEntity result = service.getOrCreatePayment("Card");
+        PaymentEntity result = service.getOrCreatePayment("Cards");
 
         assertThat(result).isNotNull();
-        verify(paymentRepository).findByName("Card");
+        // called twice due to concurrent insert
+        verify(paymentRepository, times(2)).findByName("Cards");
     }
 
     @Test
