@@ -14,6 +14,11 @@ public final class SourceService {
         this.sourceRepository = sourceRepository;
     }
 
+    /**
+     * Returns all available sources sorted alphabetically.
+     *
+     * @return sorted list of all source names.
+     */
     List<String> getSources() {
         return sourceRepository.findAllNamesOrdered();
     }
