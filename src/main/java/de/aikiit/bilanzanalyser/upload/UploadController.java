@@ -1,5 +1,6 @@
 package de.aikiit.bilanzanalyser.upload;
 
+import de.aikiit.bilanzanalyser.entity.database.repository.SourceRepository;
 import de.aikiit.bilanzanalyser.reader.BilanzRowParserResult;
 import de.aikiit.bilanzanalyser.reader.BilanzRowParserStatistic;
 import lombok.extern.log4j.Log4j2;
@@ -24,22 +25,22 @@ import java.util.List;
 @RestController
 public final class UploadController {
     private static final String UPLOAD_DIR = "uploads-bilanz-analyser";
-    private static final List<String> RELEVANT_WORKSHEETS = List.of("Ausgaben", "Einnahmen");
 
     private final UploadAnalysisService uploadAnalysisService;
+    private final SourceService sourceService;
 
     @Value("${java.io.tmpdir}")
     private String tempDir;
 
-    @Autowired
-    public UploadController(UploadAnalysisService uploadAnalysisService) {
+    public UploadController(UploadAnalysisService uploadAnalysisService, SourceService sourceService) {
         this.uploadAnalysisService = uploadAnalysisService;
+        this.sourceService = sourceService;
     }
 
     @GetMapping("/upload")
     public ModelAndView upload() {
         ModelAndView mav = new ModelAndView("upload");
-        mav.addObject("worksheets", RELEVANT_WORKSHEETS);
+        mav.addObject("worksheets", sourceService.getSources());
         mav.addObject("selectedWorksheet", "Ausgaben");
         return mav;
     }
@@ -49,10 +50,10 @@ public final class UploadController {
 
         // Create ModelAndView for the "upload" view
         ModelAndView mav = new ModelAndView("upload");
-        mav.addObject("worksheets", RELEVANT_WORKSHEETS);
+        mav.addObject("worksheets", sourceService.getSources());
 
         // prevent mingling with selected worksheet and properly escape user-provided value
-        if (!RELEVANT_WORKSHEETS.contains(selectedWorksheet)) {
+        if (!sourceService.getSources().contains(selectedWorksheet)) {
             mav.addObject("message", "Invalid worksheet selected");
             return mav;
         }

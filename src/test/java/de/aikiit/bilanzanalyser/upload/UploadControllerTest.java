@@ -14,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -29,6 +30,8 @@ class UploadControllerTest {
 
     @Mock
     private UploadAnalysisService uploadAnalysisService;
+    @Mock
+    private SourceService sourceService;
 
     @InjectMocks
     private UploadController uploadController;
@@ -37,6 +40,8 @@ class UploadControllerTest {
     void setUp() {
         // Set tempDir manually (since @Value is not injected in unit tests)
         ReflectionTestUtils.setField(uploadController, "tempDir", System.getProperty("java.io.tmpdir"));
+        when(sourceService.getSources()).thenReturn(List.of("Ausgaben", "Einnahmen"));
+        ReflectionTestUtils.setField(uploadController, "sourceService", sourceService);
     }
 
     @Test
@@ -57,7 +62,7 @@ class UploadControllerTest {
                 "dummy content".getBytes()
         );
 
-        when(uploadAnalysisService.processFile(eq("Ausgaben"), any(Path.class))).thenReturn(new BilanzRowParserResult(1,42, Collections.emptyList()));
+        when(uploadAnalysisService.processFile(eq("Ausgaben"), any(Path.class))).thenReturn(new BilanzRowParserResult(1, 42, Collections.emptyList()));
 
         ModelAndView mav = uploadController.handleFileUpload(file, "Ausgaben");
 
