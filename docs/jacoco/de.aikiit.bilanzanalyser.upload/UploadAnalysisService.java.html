@@ -2,6 +2,7 @@
 
 import de.aikiit.bilanzanalyser.reader.BilanzOdsReader;
 import de.aikiit.bilanzanalyser.reader.BilanzRowParserResult;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -9,25 +10,30 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 @Service
-<span class="fc" id="L12">public class UploadAnalysisService {</span>
+<span class="fc" id="L13">@Log4j2</span>
+<span class="fc" id="L14">public class UploadAnalysisService {</span>
 
     /**
      * Parses and analyses a given file.
      *
      * @param worksheetName selected worksheet name to process.
-     * @return result container.
      * @param spreadsheet   path to spreadsheet file.
+     * @return result container.
      * @throws IOException in case of I/O problems.
      */
     BilanzRowParserResult processFile(String worksheetName, Path spreadsheet) throws IOException {
-<span class="fc" id="L23">        BilanzOdsReader reader = new BilanzOdsReader(worksheetName, spreadsheet);</span>
-<span class="fc" id="L24">        return reader.extractData();</span>
+<span class="fc" id="L25">        BilanzOdsReader reader = new BilanzOdsReader(worksheetName, spreadsheet);</span>
+<span class="fc" id="L26">        return reader.extractData();</span>
     }
 
     @Async
     public void flushDataIntoDatabase(BilanzRowParserResult data) {
+<span class="nc" id="L31">        long start = System.nanoTime();</span>
+<span class="nc" id="L32">        log.info(&quot;Starting to flush data into database...&quot;);</span>
+
         // TODO #5 long-running task parsing, DB work, calling external APIs
-<span class="nc" id="L30">    }</span>
+<span class="nc" id="L35">        log.info(&quot;Successfully flushed data into database in {} ms.&quot;, (System.nanoTime() - start) / 1_000_000);</span>
+<span class="nc" id="L36">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
