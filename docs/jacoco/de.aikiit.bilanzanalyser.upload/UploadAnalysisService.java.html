@@ -21,9 +21,11 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Optional;
+import java.util.function.Function;
 
 @Service
-<span class="fc" id="L26">@Log4j2</span>
+<span class="fc" id="L28">@Log4j2</span>
 public class UploadAnalysisService {
     private final BilanzRowRepository bilanzRowRepository;
     private final ShopRepository shopRepository;
@@ -31,13 +33,13 @@ public class UploadAnalysisService {
     private final CategoryRepository categoryRepository;
     private final SourceRepository sourceRepository;
 
-<span class="fc" id="L34">    public UploadAnalysisService(BilanzRowRepository bilanzRowRepository, ShopRepository shopRepository, PaymentRepository paymentRepository, CategoryRepository categoryRepository, SourceRepository sourceRepository) {</span>
-<span class="fc" id="L35">        this.bilanzRowRepository = bilanzRowRepository;</span>
-<span class="fc" id="L36">        this.shopRepository = shopRepository;</span>
-<span class="fc" id="L37">        this.paymentRepository = paymentRepository;</span>
-<span class="fc" id="L38">        this.categoryRepository = categoryRepository;</span>
-<span class="fc" id="L39">        this.sourceRepository = sourceRepository;</span>
-<span class="fc" id="L40">    }</span>
+<span class="fc" id="L36">    public UploadAnalysisService(BilanzRowRepository bilanzRowRepository, ShopRepository shopRepository, PaymentRepository paymentRepository, CategoryRepository categoryRepository, SourceRepository sourceRepository) {</span>
+<span class="fc" id="L37">        this.bilanzRowRepository = bilanzRowRepository;</span>
+<span class="fc" id="L38">        this.shopRepository = shopRepository;</span>
+<span class="fc" id="L39">        this.paymentRepository = paymentRepository;</span>
+<span class="fc" id="L40">        this.categoryRepository = categoryRepository;</span>
+<span class="fc" id="L41">        this.sourceRepository = sourceRepository;</span>
+<span class="fc" id="L42">    }</span>
 
     /**
      * Parses and analyses a given file.
@@ -48,84 +50,82 @@ public class UploadAnalysisService {
      * @throws IOException in case of I/O problems.
      */
     BilanzRowParserResult processFile(String worksheetName, Path spreadsheet) throws IOException {
-<span class="fc" id="L51">        BilanzOdsReader reader = new BilanzOdsReader(worksheetName, spreadsheet);</span>
-<span class="fc" id="L52">        return reader.extractData();</span>
+<span class="nc" id="L53">        BilanzOdsReader reader = new BilanzOdsReader(worksheetName, spreadsheet);</span>
+<span class="nc" id="L54">        return reader.extractData();</span>
     }
 
     @Async
     public void flushDataIntoDatabase(BilanzRowParserResult data) {
-<span class="nc" id="L57">        long start = System.nanoTime();</span>
-<span class="nc" id="L58">        log.info(&quot;Starting to flush data into database...&quot;);</span>
+<span class="fc" id="L59">        long start = System.nanoTime();</span>
+<span class="fc" id="L60">        log.info(&quot;Starting to flush data into database...&quot;);</span>
 
-<span class="nc bnc" id="L60" title="All 2 branches missed.">        for (BilanzRow row : data.rows()) {</span>
-<span class="nc" id="L61">            BilanzRowEntity entity = new BilanzRowEntity();</span>
-<span class="nc" id="L62">            entity.setDate(row.getDate());</span>
-<span class="nc" id="L63">            entity.setAmount(row.getAmount());</span>
-<span class="nc" id="L64">            entity.setDescription(row.getDescription());</span>
-<span class="nc" id="L65">            entity.setShop(getOrCreateShop(row.getShop()));</span>
-<span class="nc" id="L66">            entity.setPayment(getOrCreatePayment(row.getPayment()));</span>
-<span class="nc" id="L67">            entity.setCategory(getOrCreateCategory(row.getCategory()));</span>
-<span class="nc" id="L68">            entity.setSource(getOrCreateSource(row.getSource()));</span>
-<span class="nc" id="L69">            bilanzRowRepository.save(entity);</span>
-<span class="nc" id="L70">        }</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">        for (BilanzRow row : data.rows()) {</span>
+<span class="fc" id="L63">            BilanzRowEntity entity = new BilanzRowEntity();</span>
+<span class="fc" id="L64">            entity.setDate(row.getDate());</span>
+<span class="fc" id="L65">            entity.setAmount(row.getAmount());</span>
+<span class="fc" id="L66">            entity.setDescription(replaceIfEmpty(row.getDescription()));</span>
+<span class="fc" id="L67">            entity.setShop(getOrCreateShop(row.getShop()));</span>
+<span class="fc" id="L68">            entity.setPayment(getOrCreatePayment(row.getPayment()));</span>
+<span class="fc" id="L69">            entity.setCategory(getOrCreateCategory(row.getCategory()));</span>
+<span class="fc" id="L70">            entity.setSource(getOrCreateSource(row.getSource()));</span>
+<span class="fc" id="L71">            bilanzRowRepository.save(entity);</span>
+<span class="fc" id="L72">        }</span>
 
-<span class="nc" id="L72">        log.info(&quot;Successfully flushed data into database in {} ms.&quot;, (System.nanoTime() - start) / 1_000_000);</span>
-<span class="nc" id="L73">    }</span>
+<span class="fc" id="L74">        log.info(&quot;Successfully flushed data into database in {} ms.&quot;, (System.nanoTime() - start) / 1_000_000);</span>
+<span class="fc" id="L75">    }</span>
+
+    @Transactional
+    &lt;T&gt; T getOrCreate(String rawName, Function&lt;String, Optional&lt;T&gt;&gt; finder, Function&lt;String, T&gt; creator) {
+<span class="fc" id="L79">        String name = replaceIfEmpty(rawName);</span>
+
+<span class="fc" id="L81">        return finder.apply(name).orElseGet(() -&gt; {</span>
+            try {
+<span class="fc" id="L83">                return creator.apply(name);</span>
+<span class="fc" id="L84">            } catch (DataIntegrityViolationException e) {</span>
+                // someone else inserted it concurrently
+<span class="fc" id="L86">                return finder.apply(name).orElseThrow();</span>
+            }
+        });
+    }
 
     @Transactional
     ShopEntity getOrCreateShop(String name) {
-<span class="nc" id="L77">        return shopRepository.findByName(name).orElseGet(() -&gt; {</span>
-            try {
-<span class="nc" id="L79">                ShopEntity entity = new ShopEntity();</span>
-<span class="nc" id="L80">                entity.setName(name);</span>
-<span class="nc" id="L81">                return shopRepository.save(entity);</span>
-<span class="nc" id="L82">            } catch (DataIntegrityViolationException e) {</span>
-                // someone else inserted it concurrently
-<span class="nc" id="L84">                return shopRepository.findByName(name).orElseThrow();</span>
-            }
+<span class="fc" id="L93">        return getOrCreate(name, shopRepository::findByName, n -&gt; {</span>
+<span class="nc" id="L94">            ShopEntity e = new ShopEntity();</span>
+<span class="nc" id="L95">            e.setName(n);</span>
+<span class="nc" id="L96">            return shopRepository.save(e);</span>
         });
     }
 
     @Transactional
     PaymentEntity getOrCreatePayment(String name) {
-<span class="nc" id="L91">        return paymentRepository.findByName(name).orElseGet(() -&gt; {</span>
-            try {
-<span class="nc" id="L93">                PaymentEntity entity = new PaymentEntity();</span>
-<span class="nc" id="L94">                entity.setName(name);</span>
-<span class="nc" id="L95">                return paymentRepository.save(entity);</span>
-<span class="nc" id="L96">            } catch (DataIntegrityViolationException e) {</span>
-                // someone else inserted it concurrently
-<span class="nc" id="L98">                return paymentRepository.findByName(name).orElseThrow();</span>
-            }
+<span class="fc" id="L102">        return getOrCreate(name, paymentRepository::findByName, n -&gt; {</span>
+<span class="fc" id="L103">            PaymentEntity e = new PaymentEntity();</span>
+<span class="fc" id="L104">            e.setName(n);</span>
+<span class="fc" id="L105">            return paymentRepository.save(e);</span>
         });
     }
 
     @Transactional
     CategoryEntity getOrCreateCategory(String name) {
-<span class="nc" id="L105">        return categoryRepository.findByName(name).orElseGet(() -&gt; {</span>
-            try {
-<span class="nc" id="L107">                CategoryEntity entity = new CategoryEntity();</span>
-<span class="nc" id="L108">                entity.setName(name);</span>
-<span class="nc" id="L109">                return categoryRepository.save(entity);</span>
-<span class="nc" id="L110">            } catch (DataIntegrityViolationException e) {</span>
-                // someone else inserted it concurrently
-<span class="nc" id="L112">                return categoryRepository.findByName(name).orElseThrow();</span>
-            }
+<span class="fc" id="L111">        return getOrCreate(name, categoryRepository::findByName, n -&gt; {</span>
+<span class="nc" id="L112">            CategoryEntity e = new CategoryEntity();</span>
+<span class="nc" id="L113">            e.setName(n);</span>
+<span class="nc" id="L114">            return categoryRepository.save(e);</span>
         });
     }
 
     @Transactional
     SourceEntity getOrCreateSource(String name) {
-<span class="nc" id="L119">        return sourceRepository.findByName(name).orElseGet(() -&gt; {</span>
-            try {
-<span class="nc" id="L121">                SourceEntity entity = new SourceEntity();</span>
-<span class="nc" id="L122">                entity.setName(name);</span>
-<span class="nc" id="L123">                return sourceRepository.save(entity);</span>
-<span class="nc" id="L124">            } catch (DataIntegrityViolationException e) {</span>
-                // someone else inserted it concurrently
-<span class="nc" id="L126">                return sourceRepository.findByName(name).orElseThrow();</span>
-            }
+<span class="fc" id="L120">        return getOrCreate(name, sourceRepository::findByName, n -&gt; {</span>
+<span class="nc" id="L121">            SourceEntity e = new SourceEntity();</span>
+<span class="nc" id="L122">            e.setName(n); // no replaceIfEmpty here before, but now consistent</span>
+<span class="nc" id="L123">            return sourceRepository.save(e);</span>
         });
+    }
+
+    String replaceIfEmpty(String value) {
+<span class="fc bfc" id="L128" title="All 4 branches covered.">        return value == null || value.isBlank() ? &quot;&lt;empty&gt;&quot; : value.trim();</span>
     }
 
 }
