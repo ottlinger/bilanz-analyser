@@ -1,8 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UploadAnalysisService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ba-web-app</a> &gt; <a href="index.source.html" class="el_package">de.aikiit.bilanzanalyser.upload</a> &gt; <span class="el_source">UploadAnalysisService.java</span></div><h1>UploadAnalysisService.java</h1><pre class="source lang-java linenums">package de.aikiit.bilanzanalyser.upload;
 
+import de.aikiit.bilanzanalyser.entity.BilanzRow;
+import de.aikiit.bilanzanalyser.entity.database.BilanzRowEntity;
+import de.aikiit.bilanzanalyser.entity.database.CategoryEntity;
+import de.aikiit.bilanzanalyser.entity.database.PaymentEntity;
+import de.aikiit.bilanzanalyser.entity.database.ShopEntity;
+import de.aikiit.bilanzanalyser.entity.database.SourceEntity;
+import de.aikiit.bilanzanalyser.entity.database.repository.BilanzRowRepository;
+import de.aikiit.bilanzanalyser.entity.database.repository.CategoryRepository;
+import de.aikiit.bilanzanalyser.entity.database.repository.PaymentRepository;
+import de.aikiit.bilanzanalyser.entity.database.repository.ShopRepository;
+import de.aikiit.bilanzanalyser.entity.database.repository.SourceRepository;
 import de.aikiit.bilanzanalyser.reader.BilanzOdsReader;
 import de.aikiit.bilanzanalyser.reader.BilanzRowParserResult;
+import jakarta.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -10,8 +23,21 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 @Service
-<span class="fc" id="L13">@Log4j2</span>
-<span class="fc" id="L14">public class UploadAnalysisService {</span>
+<span class="fc" id="L26">@Log4j2</span>
+public class UploadAnalysisService {
+    private final BilanzRowRepository bilanzRowRepository;
+    private final ShopRepository shopRepository;
+    private final PaymentRepository paymentRepository;
+    private final CategoryRepository categoryRepository;
+    private final SourceRepository sourceRepository;
+
+<span class="fc" id="L34">    public UploadAnalysisService(BilanzRowRepository bilanzRowRepository, ShopRepository shopRepository, PaymentRepository paymentRepository, CategoryRepository categoryRepository, SourceRepository sourceRepository) {</span>
+<span class="fc" id="L35">        this.bilanzRowRepository = bilanzRowRepository;</span>
+<span class="fc" id="L36">        this.shopRepository = shopRepository;</span>
+<span class="fc" id="L37">        this.paymentRepository = paymentRepository;</span>
+<span class="fc" id="L38">        this.categoryRepository = categoryRepository;</span>
+<span class="fc" id="L39">        this.sourceRepository = sourceRepository;</span>
+<span class="fc" id="L40">    }</span>
 
     /**
      * Parses and analyses a given file.
@@ -22,18 +48,85 @@ import java.nio.file.Path;
      * @throws IOException in case of I/O problems.
      */
     BilanzRowParserResult processFile(String worksheetName, Path spreadsheet) throws IOException {
-<span class="fc" id="L25">        BilanzOdsReader reader = new BilanzOdsReader(worksheetName, spreadsheet);</span>
-<span class="fc" id="L26">        return reader.extractData();</span>
+<span class="fc" id="L51">        BilanzOdsReader reader = new BilanzOdsReader(worksheetName, spreadsheet);</span>
+<span class="fc" id="L52">        return reader.extractData();</span>
     }
 
     @Async
     public void flushDataIntoDatabase(BilanzRowParserResult data) {
-<span class="nc" id="L31">        long start = System.nanoTime();</span>
-<span class="nc" id="L32">        log.info(&quot;Starting to flush data into database...&quot;);</span>
+<span class="nc" id="L57">        long start = System.nanoTime();</span>
+<span class="nc" id="L58">        log.info(&quot;Starting to flush data into database...&quot;);</span>
 
-        // TODO #5 long-running task parsing, DB work, calling external APIs
-<span class="nc" id="L35">        log.info(&quot;Successfully flushed data into database in {} ms.&quot;, (System.nanoTime() - start) / 1_000_000);</span>
-<span class="nc" id="L36">    }</span>
+<span class="nc bnc" id="L60" title="All 2 branches missed.">        for (BilanzRow row : data.rows()) {</span>
+<span class="nc" id="L61">            BilanzRowEntity entity = new BilanzRowEntity();</span>
+<span class="nc" id="L62">            entity.setDate(row.getDate());</span>
+<span class="nc" id="L63">            entity.setAmount(row.getAmount());</span>
+<span class="nc" id="L64">            entity.setDescription(row.getDescription());</span>
+<span class="nc" id="L65">            entity.setShop(getOrCreateShop(row.getShop()));</span>
+<span class="nc" id="L66">            entity.setPayment(getOrCreatePayment(row.getPayment()));</span>
+<span class="nc" id="L67">            entity.setCategory(getOrCreateCategory(row.getCategory()));</span>
+<span class="nc" id="L68">            entity.setSource(getOrCreateSource(row.getSource()));</span>
+<span class="nc" id="L69">            bilanzRowRepository.save(entity);</span>
+<span class="nc" id="L70">        }</span>
+
+<span class="nc" id="L72">        log.info(&quot;Successfully flushed data into database in {} ms.&quot;, (System.nanoTime() - start) / 1_000_000);</span>
+<span class="nc" id="L73">    }</span>
+
+    @Transactional
+    ShopEntity getOrCreateShop(String name) {
+<span class="nc" id="L77">        return shopRepository.findByName(name).orElseGet(() -&gt; {</span>
+            try {
+<span class="nc" id="L79">                ShopEntity entity = new ShopEntity();</span>
+<span class="nc" id="L80">                entity.setName(name);</span>
+<span class="nc" id="L81">                return shopRepository.save(entity);</span>
+<span class="nc" id="L82">            } catch (DataIntegrityViolationException e) {</span>
+                // someone else inserted it concurrently
+<span class="nc" id="L84">                return shopRepository.findByName(name).orElseThrow();</span>
+            }
+        });
+    }
+
+    @Transactional
+    PaymentEntity getOrCreatePayment(String name) {
+<span class="nc" id="L91">        return paymentRepository.findByName(name).orElseGet(() -&gt; {</span>
+            try {
+<span class="nc" id="L93">                PaymentEntity entity = new PaymentEntity();</span>
+<span class="nc" id="L94">                entity.setName(name);</span>
+<span class="nc" id="L95">                return paymentRepository.save(entity);</span>
+<span class="nc" id="L96">            } catch (DataIntegrityViolationException e) {</span>
+                // someone else inserted it concurrently
+<span class="nc" id="L98">                return paymentRepository.findByName(name).orElseThrow();</span>
+            }
+        });
+    }
+
+    @Transactional
+    CategoryEntity getOrCreateCategory(String name) {
+<span class="nc" id="L105">        return categoryRepository.findByName(name).orElseGet(() -&gt; {</span>
+            try {
+<span class="nc" id="L107">                CategoryEntity entity = new CategoryEntity();</span>
+<span class="nc" id="L108">                entity.setName(name);</span>
+<span class="nc" id="L109">                return categoryRepository.save(entity);</span>
+<span class="nc" id="L110">            } catch (DataIntegrityViolationException e) {</span>
+                // someone else inserted it concurrently
+<span class="nc" id="L112">                return categoryRepository.findByName(name).orElseThrow();</span>
+            }
+        });
+    }
+
+    @Transactional
+    SourceEntity getOrCreateSource(String name) {
+<span class="nc" id="L119">        return sourceRepository.findByName(name).orElseGet(() -&gt; {</span>
+            try {
+<span class="nc" id="L121">                SourceEntity entity = new SourceEntity();</span>
+<span class="nc" id="L122">                entity.setName(name);</span>
+<span class="nc" id="L123">                return sourceRepository.save(entity);</span>
+<span class="nc" id="L124">            } catch (DataIntegrityViolationException e) {</span>
+                // someone else inserted it concurrently
+<span class="nc" id="L126">                return sourceRepository.findByName(name).orElseThrow();</span>
+            }
+        });
+    }
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
