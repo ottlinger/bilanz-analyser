@@ -74,58 +74,79 @@ public class UploadAnalysisService {
 <span class="fc" id="L74">        log.info(&quot;Successfully flushed data into database in {} ms.&quot;, (System.nanoTime() - start) / 1_000_000);</span>
 <span class="fc" id="L75">    }</span>
 
+    /**
+     * Retrieves an entity by name or creates and persists it if it does not exist,
+     * assuming that the underlying entity enforces uniqueness with a database constraint on the column 'name'.
+     * &lt;p&gt;
+     * This method implements a &quot;get-or-create&quot; pattern with basic concurrency handling:
+     * it first attempts to find an existing entity using the provided {@code finder}.
+     * If none is found, it invokes the {@code creator} to create and persist a new entity.
+     * &lt;p&gt;
+     * In case of a concurrent insert (e.g. due to a unique constraint on the name),
+     * a {@link DataIntegrityViolationException} may be thrown during creation. In that case,
+     * the method retries the lookup and returns the entity inserted by the concurrent transaction.
+     * &lt;p&gt;
+     * The input name is normalized using {@link #replaceIfEmpty(String)} before lookup and creation.
+     *
+     * @param rawName the original name value; may be {@code null} or blank
+     * @param finder  function used to look up an existing entity by normalized name
+     * @param creator function that creates and persists a new entity for the normalized name;
+     *                must return a fully initialized and saved entity
+     * @param &lt;T&gt;     the entity type
+     * @return an existing or newly created entity corresponding to the given name.
+     */
     @Transactional
     &lt;T&gt; T getOrCreate(String rawName, Function&lt;String, Optional&lt;T&gt;&gt; finder, Function&lt;String, T&gt; creator) {
-<span class="fc" id="L79">        String name = replaceIfEmpty(rawName);</span>
+<span class="fc" id="L100">        String name = replaceIfEmpty(rawName);</span>
 
-<span class="fc" id="L81">        return finder.apply(name).orElseGet(() -&gt; {</span>
+<span class="fc" id="L102">        return finder.apply(name).orElseGet(() -&gt; {</span>
             try {
-<span class="fc" id="L83">                return creator.apply(name);</span>
-<span class="fc" id="L84">            } catch (DataIntegrityViolationException e) {</span>
+<span class="fc" id="L104">                return creator.apply(name);</span>
+<span class="fc" id="L105">            } catch (DataIntegrityViolationException e) {</span>
                 // someone else inserted it concurrently
-<span class="fc" id="L86">                return finder.apply(name).orElseThrow();</span>
+<span class="fc" id="L107">                return finder.apply(name).orElseThrow();</span>
             }
         });
     }
 
     @Transactional
     ShopEntity getOrCreateShop(String name) {
-<span class="fc" id="L93">        return getOrCreate(name, shopRepository::findByName, n -&gt; {</span>
-<span class="nc" id="L94">            ShopEntity e = new ShopEntity();</span>
-<span class="nc" id="L95">            e.setName(n);</span>
-<span class="nc" id="L96">            return shopRepository.save(e);</span>
+<span class="fc" id="L114">        return getOrCreate(name, shopRepository::findByName, n -&gt; {</span>
+<span class="nc" id="L115">            ShopEntity e = new ShopEntity();</span>
+<span class="nc" id="L116">            e.setName(n);</span>
+<span class="nc" id="L117">            return shopRepository.save(e);</span>
         });
     }
 
     @Transactional
     PaymentEntity getOrCreatePayment(String name) {
-<span class="fc" id="L102">        return getOrCreate(name, paymentRepository::findByName, n -&gt; {</span>
-<span class="fc" id="L103">            PaymentEntity e = new PaymentEntity();</span>
-<span class="fc" id="L104">            e.setName(n);</span>
-<span class="fc" id="L105">            return paymentRepository.save(e);</span>
+<span class="fc" id="L123">        return getOrCreate(name, paymentRepository::findByName, n -&gt; {</span>
+<span class="fc" id="L124">            PaymentEntity e = new PaymentEntity();</span>
+<span class="fc" id="L125">            e.setName(n);</span>
+<span class="fc" id="L126">            return paymentRepository.save(e);</span>
         });
     }
 
     @Transactional
     CategoryEntity getOrCreateCategory(String name) {
-<span class="fc" id="L111">        return getOrCreate(name, categoryRepository::findByName, n -&gt; {</span>
-<span class="nc" id="L112">            CategoryEntity e = new CategoryEntity();</span>
-<span class="nc" id="L113">            e.setName(n);</span>
-<span class="nc" id="L114">            return categoryRepository.save(e);</span>
+<span class="fc" id="L132">        return getOrCreate(name, categoryRepository::findByName, n -&gt; {</span>
+<span class="nc" id="L133">            CategoryEntity e = new CategoryEntity();</span>
+<span class="nc" id="L134">            e.setName(n);</span>
+<span class="nc" id="L135">            return categoryRepository.save(e);</span>
         });
     }
 
     @Transactional
     SourceEntity getOrCreateSource(String name) {
-<span class="fc" id="L120">        return getOrCreate(name, sourceRepository::findByName, n -&gt; {</span>
-<span class="nc" id="L121">            SourceEntity e = new SourceEntity();</span>
-<span class="nc" id="L122">            e.setName(n); // no replaceIfEmpty here before, but now consistent</span>
-<span class="nc" id="L123">            return sourceRepository.save(e);</span>
+<span class="fc" id="L141">        return getOrCreate(name, sourceRepository::findByName, n -&gt; {</span>
+<span class="nc" id="L142">            SourceEntity e = new SourceEntity();</span>
+<span class="nc" id="L143">            e.setName(n); // no replaceIfEmpty here before, but now consistent</span>
+<span class="nc" id="L144">            return sourceRepository.save(e);</span>
         });
     }
 
     String replaceIfEmpty(String value) {
-<span class="fc bfc" id="L128" title="All 4 branches covered.">        return value == null || value.isBlank() ? &quot;&lt;empty&gt;&quot; : value.trim();</span>
+<span class="fc bfc" id="L149" title="All 4 branches covered.">        return value == null || value.isBlank() ? &quot;&lt;empty&gt;&quot; : value.trim();</span>
     }
 
 }
