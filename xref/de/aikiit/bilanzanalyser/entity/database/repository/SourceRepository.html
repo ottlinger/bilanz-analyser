@@ -10,13 +10,18 @@
 <a class="jxr_linenumber" name="L2" href="#L2">2</a>   
 <a class="jxr_linenumber" name="L3" href="#L3">3</a>   <strong class="jxr_keyword">import</strong> de.aikiit.bilanzanalyser.entity.database.SourceEntity;
 <a class="jxr_linenumber" name="L4" href="#L4">4</a>   <strong class="jxr_keyword">import</strong> org.springframework.data.jpa.repository.JpaRepository;
-<a class="jxr_linenumber" name="L5" href="#L5">5</a>   
-<a class="jxr_linenumber" name="L6" href="#L6">6</a>   <strong class="jxr_keyword">import</strong> java.util.Optional;
-<a class="jxr_linenumber" name="L7" href="#L7">7</a>   
-<a class="jxr_linenumber" name="L8" href="#L8">8</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">interface</strong> <a name="SourceRepository" href="../../../../../../de/aikiit/bilanzanalyser/entity/database/repository/SourceRepository.html#SourceRepository">SourceRepository</a> <strong class="jxr_keyword">extends</strong> JpaRepository&lt;SourceEntity, Long&gt; {
+<a class="jxr_linenumber" name="L5" href="#L5">5</a>   <strong class="jxr_keyword">import</strong> org.springframework.data.jpa.repository.Query;
+<a class="jxr_linenumber" name="L6" href="#L6">6</a>   
+<a class="jxr_linenumber" name="L7" href="#L7">7</a>   <strong class="jxr_keyword">import</strong> java.util.List;
+<a class="jxr_linenumber" name="L8" href="#L8">8</a>   <strong class="jxr_keyword">import</strong> java.util.Optional;
 <a class="jxr_linenumber" name="L9" href="#L9">9</a>   
-<a class="jxr_linenumber" name="L10" href="#L10">10</a>      Optional&lt;SourceEntity&gt; findByName(String name);
-<a class="jxr_linenumber" name="L11" href="#L11">11</a>  }
+<a class="jxr_linenumber" name="L10" href="#L10">10</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">interface</strong> <a name="SourceRepository" href="../../../../../../de/aikiit/bilanzanalyser/entity/database/repository/SourceRepository.html#SourceRepository">SourceRepository</a> <strong class="jxr_keyword">extends</strong> JpaRepository&lt;SourceEntity, Long&gt; {
+<a class="jxr_linenumber" name="L11" href="#L11">11</a>  
+<a class="jxr_linenumber" name="L12" href="#L12">12</a>      Optional&lt;SourceEntity&gt; findByName(String name);
+<a class="jxr_linenumber" name="L13" href="#L13">13</a>  
+<a class="jxr_linenumber" name="L14" href="#L14">14</a>      @Query(<span class="jxr_string">"SELECT s.name FROM SourceEntity s ORDER BY s.name ASC"</span>)
+<a class="jxr_linenumber" name="L15" href="#L15">15</a>      List&lt;String&gt; findAllNamesOrdered();
+<a class="jxr_linenumber" name="L16" href="#L16">16</a>  }
 </pre>
 <hr/>
 <div id="footer">© 2026 <a href="https://www.aiki-it.de">AIKI IT</a></div>
