@@ -7,47 +7,65 @@ import lombok.extern.log4j.Log4j2;
 import org.odftoolkit.odfdom.doc.table.OdfTableRow;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.time.LocalDate;
+import java.util.Locale;
 import java.util.Optional;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-<span class="fc" id="L14">@Log4j2</span>
+<span class="fc" id="L18">@Log4j2</span>
 public final class BilanzRowParser {
 
     public static Optional&lt;BilanzRow&gt; fromOdfTableRow(final OdfTableRow row) {
         try {
-<span class="fc" id="L19">            var bilanzRow = BilanzRow.builder() //</span>
+            // in order to handle LibreOffice-specific currency values we need to parse properly and handle mixture of '.' and ',' in numbers.
+<span class="fc" id="L24">            DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.GERMANY);</span>
+<span class="fc" id="L25">            DecimalFormat format = new DecimalFormat();</span>
+<span class="fc" id="L26">            format.setDecimalFormatSymbols(symbols);</span>
+<span class="fc" id="L27">            format.setParseBigDecimal(true);</span>
+
+<span class="fc" id="L29">            var bilanzRow = BilanzRow.builder() //</span>
                     // remove trailing spaces and currency symbol
-<span class="fc" id="L21">                    .amount(new BigDecimal(cleanUpAmount(row.getCellByIndex(1).getStringValue()))) //</span>
-<span class="fc" id="L22">                    .description(row.getCellByIndex(2).getStringValue()) //</span>
-<span class="fc" id="L23">                    .shop(row.getCellByIndex(3).getStringValue()) //</span>
-<span class="fc" id="L24">                    .payment(row.getCellByIndex(4).getStringValue()) //</span>
-<span class="fc" id="L25">                    .category(row.getCellByIndex(5).getStringValue());</span>
+<span class="fc" id="L31">                    .amount(new BigDecimal(format.parse(cleanUpAmount(row.getCellByIndex(1).getStringValue())).toString())) //</span>
+<span class="fc" id="L32">                    .description(row.getCellByIndex(2).getStringValue()) //</span>
+<span class="fc" id="L33">                    .shop(row.getCellByIndex(3).getStringValue()) //</span>
+<span class="fc" id="L34">                    .payment(row.getCellByIndex(4).getStringValue()) //</span>
+<span class="fc" id="L35">                    .category(row.getCellByIndex(5).getStringValue());</span>
 
             // map special values in date column to fallback date in entity
-<span class="fc" id="L28">            var sourceDate = row.getCellByIndex(0).getStringValue().trim();</span>
-<span class="fc bfc" id="L29" title="All 4 branches covered.">            if (!sourceDate.isBlank() &amp;&amp; !&quot;?&quot;.equals(sourceDate)) {</span>
-<span class="fc" id="L30">                bilanzRow.date(LocalDate.parse(sourceDate));</span>
+<span class="fc" id="L38">            var sourceDate = row.getCellByIndex(0).getStringValue().trim();</span>
+<span class="fc bfc" id="L39" title="All 4 branches covered.">            if (!sourceDate.isBlank() &amp;&amp; !&quot;?&quot;.equals(sourceDate)) {</span>
+<span class="fc" id="L40">                bilanzRow.date(LocalDate.parse(sourceDate));</span>
             }
 
-<span class="fc" id="L33">            return Optional.of(bilanzRow.build());</span>
-<span class="fc" id="L34">        } catch (Exception e) {</span>
-<span class="fc" id="L35">            log.error(&quot;Skipping row due to: {}&quot;, e.getMessage());</span>
-<span class="fc" id="L36">            return Optional.empty();</span>
+<span class="fc" id="L43">            return Optional.of(bilanzRow.build());</span>
+<span class="fc" id="L44">        } catch (Exception e) {</span>
+<span class="fc" id="L45">            log.error(&quot;Skipping row '{}' due to: {}&quot;, debugRowValues(row), e.getMessage());</span>
+<span class="fc" id="L46">            return Optional.empty();</span>
         }
     }
 
+    static String debugRowValues(final OdfTableRow row) {
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        if (row == null) {</span>
+<span class="fc" id="L52">            return &quot;null&quot;;</span>
+        }
+<span class="fc" id="L54">        return &quot;[&quot; + row.getCellByIndex(0).getStringValue() + &quot;, &quot; + row.getCellByIndex(1).getStringValue() + &quot;, &quot; + row.getCellByIndex(2).getStringValue() + &quot;, &quot; + row.getCellByIndex(3).getStringValue() + &quot;, &quot; + row.getCellByIndex(4).getStringValue() + &quot;, &quot; + row.getCellByIndex(5).getStringValue() + &quot;]&quot;;</span>
+
+    }
+
     /**
-     * Removes currency symbol, changes &lt;code&gt;,&lt;/code&gt; to &lt;code&gt;.&lt;/code&gt; and trims the given amount value from an ODS file.
+     * Removes currency symbol and trims the given amount value from an ODS file.
      *
      * @param amount given amount, e.g. 1,23 €
      * @return trimmed amount in order to be parseable as a numeric.
      */
     static String cleanUpAmount(String amount) {
-<span class="fc bfc" id="L47" title="All 4 branches covered.">        if (amount != null &amp;&amp; !amount.isEmpty()) {</span>
-<span class="fc" id="L48">            return amount.replace(&quot;€&quot;, &quot;&quot;).replace(&quot;,&quot;, &quot;.&quot;).trim();</span>
+<span class="fc bfc" id="L65" title="All 4 branches covered.">        if (amount != null &amp;&amp; !amount.isEmpty()) {</span>
+<span class="fc" id="L66">            return amount.replace(&quot;€&quot;, &quot;&quot;).trim();</span>
         }
-<span class="fc" id="L50">        return amount;</span>
+<span class="fc" id="L68">        return amount;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
