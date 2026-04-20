@@ -7,7 +7,11 @@ import lombok.extern.log4j.Log4j2;
 import org.odftoolkit.odfdom.doc.table.OdfTableRow;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.time.LocalDate;
+import java.util.Locale;
 import java.util.Optional;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -16,9 +20,15 @@ public final class BilanzRowParser {
 
     public static Optional<BilanzRow> fromOdfTableRow(final OdfTableRow row) {
         try {
+            // in order to handle LibreOffice-specific currency values we need to parse properly and handle mixture of '.' and ',' in numbers.
+            DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.GERMANY);
+            DecimalFormat format = new DecimalFormat();
+            format.setDecimalFormatSymbols(symbols);
+            format.setParseBigDecimal(true);
+
             var bilanzRow = BilanzRow.builder() //
                     // remove trailing spaces and currency symbol
-                    .amount(new BigDecimal(cleanUpAmount(row.getCellByIndex(1).getStringValue()))) //
+                    .amount(new BigDecimal(format.parse(cleanUpAmount(row.getCellByIndex(1).getStringValue())).toString())) //
                     .description(row.getCellByIndex(2).getStringValue()) //
                     .shop(row.getCellByIndex(3).getStringValue()) //
                     .payment(row.getCellByIndex(4).getStringValue()) //
@@ -32,20 +42,28 @@ public final class BilanzRowParser {
 
             return Optional.of(bilanzRow.build());
         } catch (Exception e) {
-            log.error("Skipping row due to: {}", e.getMessage());
+            log.error("Skipping row '{}' due to: {}", debugRowValues(row), e.getMessage());
             return Optional.empty();
         }
     }
 
+    static String debugRowValues(final OdfTableRow row) {
+        if (row == null) {
+            return "null";
+        }
+        return "[" + row.getCellByIndex(0).getStringValue() + ", " + row.getCellByIndex(1).getStringValue() + ", " + row.getCellByIndex(2).getStringValue() + ", " + row.getCellByIndex(3).getStringValue() + ", " + row.getCellByIndex(4).getStringValue() + ", " + row.getCellByIndex(5).getStringValue() + "]";
+
+    }
+
     /**
-     * Removes currency symbol, changes <code>,</code> to <code>.</code> and trims the given amount value from an ODS file.
+     * Removes currency symbol and trims the given amount value from an ODS file.
      *
      * @param amount given amount, e.g. 1,23 €
      * @return trimmed amount in order to be parseable as a numeric.
      */
     static String cleanUpAmount(String amount) {
         if (amount != null && !amount.isEmpty()) {
-            return amount.replace("€", "").replace(",", ".").trim();
+            return amount.replace("€", "").trim();
         }
         return amount;
     }

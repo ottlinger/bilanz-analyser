@@ -30,7 +30,7 @@ class BilanzRowParserTest {
             }
 
             newRow.getCellByIndex(0).setStringValue(dateValue);
-            newRow.getCellByIndex(1).setStringValue("2,34 €");
+            newRow.getCellByIndex(1).setStringValue("12.000,34 €");
             newRow.getCellByIndex(2).setStringValue("Just a test row");
             newRow.getCellByIndex(3).setStringValue("ReWe");
             newRow.getCellByIndex(4).setStringValue("EC");
@@ -44,7 +44,7 @@ class BilanzRowParserTest {
         assertThat(fromOdfTableRow(null)).isEmpty();
         assertThat(fromOdfTableRow(createExampleRow("2025-10-02"))).isPresent().contains(BilanzRow.builder() //
                 .date(LocalDate.parse("2025-10-02")) //
-                .amount(new BigDecimal("2.34")) //
+                .amount(new BigDecimal("12000.34")) //
                 .description("Just a test row") //
                 .shop("ReWe").payment("EC").category("Lebensmittel").build());
     }
@@ -54,7 +54,7 @@ class BilanzRowParserTest {
         for (String date : new String[]{null, "?", " ?  ", " "}) {
             assertThat(fromOdfTableRow(createExampleRow(date))).isPresent().contains(BilanzRow.builder() //
                     .date(BilanzRow.FALLBACK_DATE) //
-                    .amount(new BigDecimal("2.34")) //
+                    .amount(new BigDecimal("12000.34")) //
                     .description("Just a test row") //
                     .shop("ReWe").payment("EC").category("Lebensmittel").build());
         }
@@ -66,6 +66,6 @@ class BilanzRowParserTest {
         assertThat(cleanUpAmount("")).isEqualTo("");
         assertThat(cleanUpAmount(" ")).isEqualTo("");
         assertThat(cleanUpAmount("    €    ")).isEqualTo("");
-        assertThat(cleanUpAmount("   1,324 €    ")).isEqualTo("1.324");
+        assertThat(cleanUpAmount("   11.356,324 €    ")).isEqualTo("11.356,324");
     }
 }
