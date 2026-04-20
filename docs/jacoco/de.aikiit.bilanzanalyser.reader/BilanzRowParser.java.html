@@ -16,20 +16,24 @@ public final class BilanzRowParser {
 
     public static Optional&lt;BilanzRow&gt; fromOdfTableRow(final OdfTableRow row) {
         try {
-<span class="fc" id="L19">            BilanzRow bilanzRow = BilanzRow.builder() //</span>
-                    // expected format: yyyy-MM-dd
-<span class="fc" id="L21">                    .date(LocalDate.parse(row.getCellByIndex(0).getStringValue()))</span>
+<span class="fc" id="L19">            var bilanzRow = BilanzRow.builder() //</span>
                     // remove trailing spaces and currency symbol
-<span class="fc" id="L23">                    .amount(new BigDecimal(cleanUpAmount(row.getCellByIndex(1).getStringValue()))) //</span>
-<span class="fc" id="L24">                    .description(row.getCellByIndex(2).getStringValue()) //</span>
-<span class="fc" id="L25">                    .shop(row.getCellByIndex(3).getStringValue()) //</span>
-<span class="fc" id="L26">                    .payment(row.getCellByIndex(4).getStringValue()) //</span>
-<span class="fc" id="L27">                    .category(row.getCellByIndex(5).getStringValue()).build();</span>
+<span class="fc" id="L21">                    .amount(new BigDecimal(cleanUpAmount(row.getCellByIndex(1).getStringValue()))) //</span>
+<span class="fc" id="L22">                    .description(row.getCellByIndex(2).getStringValue()) //</span>
+<span class="fc" id="L23">                    .shop(row.getCellByIndex(3).getStringValue()) //</span>
+<span class="fc" id="L24">                    .payment(row.getCellByIndex(4).getStringValue()) //</span>
+<span class="fc" id="L25">                    .category(row.getCellByIndex(5).getStringValue());</span>
 
-<span class="fc" id="L29">            return Optional.of(bilanzRow);</span>
-<span class="fc" id="L30">        } catch (Exception e) {</span>
-<span class="fc" id="L31">            log.error(&quot;Skipping row due to: {}&quot;, e.getMessage());</span>
-<span class="fc" id="L32">            return Optional.empty();</span>
+            // map special values in date column to fallback date in entity
+<span class="fc" id="L28">            var sourceDate = row.getCellByIndex(0).getStringValue().trim();</span>
+<span class="fc bfc" id="L29" title="All 4 branches covered.">            if (!sourceDate.isBlank() &amp;&amp; !&quot;?&quot;.equals(sourceDate)) {</span>
+<span class="fc" id="L30">                bilanzRow.date(LocalDate.parse(sourceDate));</span>
+            }
+
+<span class="fc" id="L33">            return Optional.of(bilanzRow.build());</span>
+<span class="fc" id="L34">        } catch (Exception e) {</span>
+<span class="fc" id="L35">            log.error(&quot;Skipping row due to: {}&quot;, e.getMessage());</span>
+<span class="fc" id="L36">            return Optional.empty();</span>
         }
     }
 
@@ -40,10 +44,10 @@ public final class BilanzRowParser {
      * @return trimmed amount in order to be parseable as a numeric.
      */
     static String cleanUpAmount(String amount) {
-<span class="fc bfc" id="L43" title="All 4 branches covered.">        if (amount != null &amp;&amp; !amount.isEmpty()) {</span>
-<span class="fc" id="L44">            return amount.replace(&quot;€&quot;, &quot;&quot;).replace(&quot;,&quot;, &quot;.&quot;).trim();</span>
+<span class="fc bfc" id="L47" title="All 4 branches covered.">        if (amount != null &amp;&amp; !amount.isEmpty()) {</span>
+<span class="fc" id="L48">            return amount.replace(&quot;€&quot;, &quot;&quot;).replace(&quot;,&quot;, &quot;.&quot;).trim();</span>
         }
-<span class="fc" id="L46">        return amount;</span>
+<span class="fc" id="L50">        return amount;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
