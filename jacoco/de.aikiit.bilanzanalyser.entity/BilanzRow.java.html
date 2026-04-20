@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BilanzRow.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ba-web-app</a> &gt; <a href="index.source.html" class="el_package">de.aikiit.bilanzanalyser.entity</a> &gt; <span class="el_source">BilanzRow.java</span></div><h1>BilanzRow.java</h1><pre class="source lang-java linenums">package de.aikiit.bilanzanalyser.entity;
+
+import lombok.Builder;
+import lombok.Data;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+@Data
+@Builder
+public class BilanzRow {
+    /**
+     * Default fallback indicates that no date was set, e.g. empty date or '?'.
+     */
+<span class="fc" id="L15">    public static final LocalDate FALLBACK_DATE = LocalDate.of(1970, 1, 1);</span>
+
+    @Builder.Default
+    private LocalDate date = FALLBACK_DATE;
+    private BigDecimal amount;
+    private String description;
+    private String shop;
+    private String payment;
+    private String category;
+    @Builder.Default
+    private String source = &quot;Ausgaben&quot;;
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
