@@ -16,17 +16,21 @@ public final class BilanzRowParser {
 
     public static Optional<BilanzRow> fromOdfTableRow(final OdfTableRow row) {
         try {
-            BilanzRow bilanzRow = BilanzRow.builder() //
-                    // expected format: yyyy-MM-dd
-                    .date(LocalDate.parse(row.getCellByIndex(0).getStringValue()))
+            var bilanzRow = BilanzRow.builder() //
                     // remove trailing spaces and currency symbol
                     .amount(new BigDecimal(cleanUpAmount(row.getCellByIndex(1).getStringValue()))) //
                     .description(row.getCellByIndex(2).getStringValue()) //
                     .shop(row.getCellByIndex(3).getStringValue()) //
                     .payment(row.getCellByIndex(4).getStringValue()) //
-                    .category(row.getCellByIndex(5).getStringValue()).build();
+                    .category(row.getCellByIndex(5).getStringValue());
 
-            return Optional.of(bilanzRow);
+            // map special values in date column to fallback date in entity
+            var sourceDate = row.getCellByIndex(0).getStringValue().trim();
+            if (!sourceDate.isBlank() && !"?".equals(sourceDate)) {
+                bilanzRow.date(LocalDate.parse(sourceDate));
+            }
+
+            return Optional.of(bilanzRow.build());
         } catch (Exception e) {
             log.error("Skipping row due to: {}", e.getMessage());
             return Optional.empty();

@@ -16,17 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class BilanzRowParserTest {
 
-    @Test
-    void fromOdfTableRowNPESafe() throws Exception {
-        assertThat(fromOdfTableRow(null)).isEmpty();
-        assertThat(fromOdfTableRow(createExampleRow())).isPresent().contains(BilanzRow.builder() //
-                .date(LocalDate.parse("2025-10-02")) //
-                .amount(new BigDecimal("2.34")) //
-                .description("Just a test row") //
-                .shop("ReWe").payment("EC").category("Lebensmittel").build());
-    }
-
-    private static OdfTableRow createExampleRow() throws Exception {
+    private static OdfTableRow createExampleRow(String dateValue) throws Exception {
         try (OdfDocument document = OdfSpreadsheetDocument.newSpreadsheetDocument()) {
             OdfTable t = OdfTable.newTable(document, 5, 6);
             t.setTableName("Ausgaben");
@@ -39,13 +29,34 @@ class BilanzRowParserTest {
                 assertThat(newRow.getCellByIndex(0)).isNotNull();
             }
 
-            newRow.getCellByIndex(0).setStringValue("2025-10-02");
+            newRow.getCellByIndex(0).setStringValue(dateValue);
             newRow.getCellByIndex(1).setStringValue("2,34 €");
             newRow.getCellByIndex(2).setStringValue("Just a test row");
             newRow.getCellByIndex(3).setStringValue("ReWe");
             newRow.getCellByIndex(4).setStringValue("EC");
             newRow.getCellByIndex(5).setStringValue("Lebensmittel");
             return newRow;
+        }
+    }
+
+    @Test
+    void fromOdfTableRowNPESafe() throws Exception {
+        assertThat(fromOdfTableRow(null)).isEmpty();
+        assertThat(fromOdfTableRow(createExampleRow("2025-10-02"))).isPresent().contains(BilanzRow.builder() //
+                .date(LocalDate.parse("2025-10-02")) //
+                .amount(new BigDecimal("2.34")) //
+                .description("Just a test row") //
+                .shop("ReWe").payment("EC").category("Lebensmittel").build());
+    }
+
+    @Test
+    void fromOdfTableRowSpecialDateHandlingMappedToDefault() throws Exception {
+        for (String date : new String[]{null, "?", " ?  ", " "}) {
+            assertThat(fromOdfTableRow(createExampleRow(date))).isPresent().contains(BilanzRow.builder() //
+                    .date(BilanzRow.FALLBACK_DATE) //
+                    .amount(new BigDecimal("2.34")) //
+                    .description("Just a test row") //
+                    .shop("ReWe").payment("EC").category("Lebensmittel").build());
         }
     }
 

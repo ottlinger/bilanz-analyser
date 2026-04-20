@@ -10,10 +10,12 @@ import java.time.LocalDate;
 @Builder
 public class BilanzRow {
     /**
-     * Default indicates that no date was set, e.g. empty date or '?'.
+     * Default fallback indicates that no date was set, e.g. empty date or '?'.
      */
+    public static final LocalDate FALLBACK_DATE = LocalDate.of(1970, 1, 1);
+
     @Builder.Default
-    private LocalDate date = LocalDate.of(1970, 1, 1);
+    private LocalDate date = FALLBACK_DATE;
     private BigDecimal amount;
     private String description;
     private String shop;
