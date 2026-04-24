@@ -55,6 +55,7 @@ public class UploadAnalysisService {
     }
 
     @Async
+    @Transactional
     public void flushDataIntoDatabase(BilanzRowParserResult data) {
         long start = System.nanoTime();
         log.info("Starting to flush data into database...");
