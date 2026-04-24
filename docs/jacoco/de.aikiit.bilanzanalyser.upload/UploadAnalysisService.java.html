@@ -55,24 +55,25 @@ public class UploadAnalysisService {
     }
 
     @Async
+    @Transactional
     public void flushDataIntoDatabase(BilanzRowParserResult data) {
-<span class="fc" id="L59">        long start = System.nanoTime();</span>
-<span class="fc" id="L60">        log.info(&quot;Starting to flush data into database...&quot;);</span>
+<span class="fc" id="L60">        long start = System.nanoTime();</span>
+<span class="fc" id="L61">        log.info(&quot;Starting to flush data into database...&quot;);</span>
 
-<span class="fc bfc" id="L62" title="All 2 branches covered.">        for (BilanzRow row : data.rows()) {</span>
-<span class="fc" id="L63">            BilanzRowEntity entity = new BilanzRowEntity();</span>
-<span class="fc" id="L64">            entity.setDate(row.getDate());</span>
-<span class="fc" id="L65">            entity.setAmount(row.getAmount());</span>
-<span class="fc" id="L66">            entity.setDescription(replaceIfEmpty(row.getDescription()));</span>
-<span class="fc" id="L67">            entity.setShop(getOrCreateShop(row.getShop()));</span>
-<span class="fc" id="L68">            entity.setPayment(getOrCreatePayment(row.getPayment()));</span>
-<span class="fc" id="L69">            entity.setCategory(getOrCreateCategory(row.getCategory()));</span>
-<span class="fc" id="L70">            entity.setSource(getOrCreateSource(row.getSource()));</span>
-<span class="fc" id="L71">            bilanzRowRepository.save(entity);</span>
-<span class="fc" id="L72">        }</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">        for (BilanzRow row : data.rows()) {</span>
+<span class="fc" id="L64">            BilanzRowEntity entity = new BilanzRowEntity();</span>
+<span class="fc" id="L65">            entity.setDate(row.getDate());</span>
+<span class="fc" id="L66">            entity.setAmount(row.getAmount());</span>
+<span class="fc" id="L67">            entity.setDescription(replaceIfEmpty(row.getDescription()));</span>
+<span class="fc" id="L68">            entity.setShop(getOrCreateShop(row.getShop()));</span>
+<span class="fc" id="L69">            entity.setPayment(getOrCreatePayment(row.getPayment()));</span>
+<span class="fc" id="L70">            entity.setCategory(getOrCreateCategory(row.getCategory()));</span>
+<span class="fc" id="L71">            entity.setSource(getOrCreateSource(row.getSource()));</span>
+<span class="fc" id="L72">            bilanzRowRepository.save(entity);</span>
+<span class="fc" id="L73">        }</span>
 
-<span class="fc" id="L74">        log.info(&quot;Successfully flushed data into database in {} ms.&quot;, (System.nanoTime() - start) / 1_000_000);</span>
-<span class="fc" id="L75">    }</span>
+<span class="fc" id="L75">        log.info(&quot;Successfully flushed data into database in {} ms.&quot;, (System.nanoTime() - start) / 1_000_000);</span>
+<span class="fc" id="L76">    }</span>
 
     /**
      * Retrieves an entity by name or creates and persists it if it does not exist,
@@ -97,56 +98,56 @@ public class UploadAnalysisService {
      */
     @Transactional
     &lt;T&gt; T getOrCreate(String rawName, Function&lt;String, Optional&lt;T&gt;&gt; finder, Function&lt;String, T&gt; creator) {
-<span class="fc" id="L100">        String name = replaceIfEmpty(rawName);</span>
+<span class="fc" id="L101">        String name = replaceIfEmpty(rawName);</span>
 
-<span class="fc" id="L102">        return finder.apply(name).orElseGet(() -&gt; {</span>
+<span class="fc" id="L103">        return finder.apply(name).orElseGet(() -&gt; {</span>
             try {
-<span class="fc" id="L104">                return creator.apply(name);</span>
-<span class="fc" id="L105">            } catch (DataIntegrityViolationException e) {</span>
+<span class="fc" id="L105">                return creator.apply(name);</span>
+<span class="fc" id="L106">            } catch (DataIntegrityViolationException e) {</span>
                 // someone else inserted it concurrently
-<span class="fc" id="L107">                return finder.apply(name).orElseThrow();</span>
+<span class="fc" id="L108">                return finder.apply(name).orElseThrow();</span>
             }
         });
     }
 
     @Transactional
     ShopEntity getOrCreateShop(String name) {
-<span class="fc" id="L114">        return getOrCreate(name, shopRepository::findByName, n -&gt; {</span>
-<span class="nc" id="L115">            ShopEntity e = new ShopEntity();</span>
-<span class="nc" id="L116">            e.setName(n);</span>
-<span class="nc" id="L117">            return shopRepository.save(e);</span>
+<span class="fc" id="L115">        return getOrCreate(name, shopRepository::findByName, n -&gt; {</span>
+<span class="nc" id="L116">            ShopEntity e = new ShopEntity();</span>
+<span class="nc" id="L117">            e.setName(n);</span>
+<span class="nc" id="L118">            return shopRepository.save(e);</span>
         });
     }
 
     @Transactional
     PaymentEntity getOrCreatePayment(String name) {
-<span class="fc" id="L123">        return getOrCreate(name, paymentRepository::findByName, n -&gt; {</span>
-<span class="fc" id="L124">            PaymentEntity e = new PaymentEntity();</span>
-<span class="fc" id="L125">            e.setName(n);</span>
-<span class="fc" id="L126">            return paymentRepository.save(e);</span>
+<span class="fc" id="L124">        return getOrCreate(name, paymentRepository::findByName, n -&gt; {</span>
+<span class="fc" id="L125">            PaymentEntity e = new PaymentEntity();</span>
+<span class="fc" id="L126">            e.setName(n);</span>
+<span class="fc" id="L127">            return paymentRepository.save(e);</span>
         });
     }
 
     @Transactional
     CategoryEntity getOrCreateCategory(String name) {
-<span class="fc" id="L132">        return getOrCreate(name, categoryRepository::findByName, n -&gt; {</span>
-<span class="nc" id="L133">            CategoryEntity e = new CategoryEntity();</span>
-<span class="nc" id="L134">            e.setName(n);</span>
-<span class="nc" id="L135">            return categoryRepository.save(e);</span>
+<span class="fc" id="L133">        return getOrCreate(name, categoryRepository::findByName, n -&gt; {</span>
+<span class="nc" id="L134">            CategoryEntity e = new CategoryEntity();</span>
+<span class="nc" id="L135">            e.setName(n);</span>
+<span class="nc" id="L136">            return categoryRepository.save(e);</span>
         });
     }
 
     @Transactional
     SourceEntity getOrCreateSource(String name) {
-<span class="fc" id="L141">        return getOrCreate(name, sourceRepository::findByName, n -&gt; {</span>
-<span class="nc" id="L142">            SourceEntity e = new SourceEntity();</span>
-<span class="nc" id="L143">            e.setName(n); // no replaceIfEmpty here before, but now consistent</span>
-<span class="nc" id="L144">            return sourceRepository.save(e);</span>
+<span class="fc" id="L142">        return getOrCreate(name, sourceRepository::findByName, n -&gt; {</span>
+<span class="nc" id="L143">            SourceEntity e = new SourceEntity();</span>
+<span class="nc" id="L144">            e.setName(n); // no replaceIfEmpty here before, but now consistent</span>
+<span class="nc" id="L145">            return sourceRepository.save(e);</span>
         });
     }
 
     String replaceIfEmpty(String value) {
-<span class="fc bfc" id="L149" title="All 4 branches covered.">        return value == null || value.isBlank() ? &quot;&lt;empty&gt;&quot; : value.trim();</span>
+<span class="fc bfc" id="L150" title="All 4 branches covered.">        return value == null || value.isBlank() ? &quot;&lt;empty&gt;&quot; : value.trim();</span>
     }
 
 }
