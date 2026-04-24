@@ -9,49 +9,48 @@ import org.odftoolkit.odfdom.doc.table.OdfTableRow;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.Locale;
 import java.util.Optional;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-<span class="fc" id="L18">@Log4j2</span>
+<span class="fc" id="L17">@Log4j2</span>
 public final class BilanzRowParser {
 
     public static Optional&lt;BilanzRow&gt; fromOdfTableRow(final OdfTableRow row) {
         try {
             // in order to handle LibreOffice-specific currency values we need to parse properly and handle mixture of '.' and ',' in numbers.
-<span class="fc" id="L24">            DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.GERMANY);</span>
-<span class="fc" id="L25">            DecimalFormat format = new DecimalFormat();</span>
-<span class="fc" id="L26">            format.setDecimalFormatSymbols(symbols);</span>
-<span class="fc" id="L27">            format.setParseBigDecimal(true);</span>
+<span class="fc" id="L23">            DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.GERMANY);</span>
+<span class="fc" id="L24">            DecimalFormat format = new DecimalFormat();</span>
+<span class="fc" id="L25">            format.setDecimalFormatSymbols(symbols);</span>
+<span class="fc" id="L26">            format.setParseBigDecimal(true);</span>
 
-<span class="fc" id="L29">            var bilanzRow = BilanzRow.builder() //</span>
+<span class="fc" id="L28">            var bilanzRow = BilanzRow.builder() //</span>
                     // remove trailing spaces and currency symbol
-<span class="fc" id="L31">                    .amount(new BigDecimal(format.parse(cleanUpAmount(row.getCellByIndex(1).getStringValue())).toString())) //</span>
-<span class="fc" id="L32">                    .description(row.getCellByIndex(2).getStringValue()) //</span>
-<span class="fc" id="L33">                    .shop(row.getCellByIndex(3).getStringValue()) //</span>
-<span class="fc" id="L34">                    .payment(row.getCellByIndex(4).getStringValue()) //</span>
-<span class="fc" id="L35">                    .category(row.getCellByIndex(5).getStringValue());</span>
+<span class="fc" id="L30">                    .amount(new BigDecimal(format.parse(cleanUpAmount(row.getCellByIndex(1).getStringValue())).toString())) //</span>
+<span class="fc" id="L31">                    .description(row.getCellByIndex(2).getStringValue()) //</span>
+<span class="fc" id="L32">                    .shop(row.getCellByIndex(3).getStringValue()) //</span>
+<span class="fc" id="L33">                    .payment(row.getCellByIndex(4).getStringValue()) //</span>
+<span class="fc" id="L34">                    .category(row.getCellByIndex(5).getStringValue());</span>
 
             // map special values in date column to fallback date in entity
-<span class="fc" id="L38">            var sourceDate = row.getCellByIndex(0).getStringValue().trim();</span>
-<span class="fc bfc" id="L39" title="All 4 branches covered.">            if (!sourceDate.isBlank() &amp;&amp; !&quot;?&quot;.equals(sourceDate)) {</span>
-<span class="fc" id="L40">                bilanzRow.date(LocalDate.parse(sourceDate));</span>
+<span class="fc" id="L37">            var sourceDate = row.getCellByIndex(0).getStringValue().trim();</span>
+<span class="fc bfc" id="L38" title="All 4 branches covered.">            if (!sourceDate.isBlank() &amp;&amp; !&quot;?&quot;.equals(sourceDate)) {</span>
+<span class="fc" id="L39">                bilanzRow.date(LocalDate.parse(sourceDate));</span>
             }
 
-<span class="fc" id="L43">            return Optional.of(bilanzRow.build());</span>
-<span class="fc" id="L44">        } catch (Exception e) {</span>
-<span class="fc" id="L45">            log.error(&quot;Skipping row '{}' due to: {}&quot;, debugRowValues(row), e.getMessage());</span>
-<span class="fc" id="L46">            return Optional.empty();</span>
+<span class="fc" id="L42">            return Optional.of(bilanzRow.build());</span>
+<span class="fc" id="L43">        } catch (Exception e) {</span>
+<span class="fc" id="L44">            log.error(&quot;Skipping row '{}' due to: {}&quot;, debugRowValues(row), e.getMessage());</span>
+<span class="fc" id="L45">            return Optional.empty();</span>
         }
     }
 
     static String debugRowValues(final OdfTableRow row) {
-<span class="fc bfc" id="L51" title="All 2 branches covered.">        if (row == null) {</span>
-<span class="fc" id="L52">            return &quot;null&quot;;</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        if (row == null) {</span>
+<span class="fc" id="L51">            return &quot;null&quot;;</span>
         }
-<span class="fc" id="L54">        return &quot;[&quot; + row.getCellByIndex(0).getStringValue() + &quot;, &quot; + row.getCellByIndex(1).getStringValue() + &quot;, &quot; + row.getCellByIndex(2).getStringValue() + &quot;, &quot; + row.getCellByIndex(3).getStringValue() + &quot;, &quot; + row.getCellByIndex(4).getStringValue() + &quot;, &quot; + row.getCellByIndex(5).getStringValue() + &quot;]&quot;;</span>
+<span class="fc" id="L53">        return &quot;[&quot; + row.getCellByIndex(0).getStringValue() + &quot;, &quot; + row.getCellByIndex(1).getStringValue() + &quot;, &quot; + row.getCellByIndex(2).getStringValue() + &quot;, &quot; + row.getCellByIndex(3).getStringValue() + &quot;, &quot; + row.getCellByIndex(4).getStringValue() + &quot;, &quot; + row.getCellByIndex(5).getStringValue() + &quot;]&quot;;</span>
 
     }
 
@@ -62,10 +61,10 @@ public final class BilanzRowParser {
      * @return trimmed amount in order to be parseable as a numeric.
      */
     static String cleanUpAmount(String amount) {
-<span class="fc bfc" id="L65" title="All 4 branches covered.">        if (amount != null &amp;&amp; !amount.isEmpty()) {</span>
-<span class="fc" id="L66">            return amount.replace(&quot;€&quot;, &quot;&quot;).trim();</span>
+<span class="fc bfc" id="L64" title="All 4 branches covered.">        if (amount != null &amp;&amp; !amount.isEmpty()) {</span>
+<span class="fc" id="L65">            return amount.replace(&quot;€&quot;, &quot;&quot;).trim();</span>
         }
-<span class="fc" id="L68">        return amount;</span>
+<span class="fc" id="L67">        return amount;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
