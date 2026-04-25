@@ -25,9 +25,16 @@ public final class BilanzRowParser {
             format.setDecimalFormatSymbols(symbols);
             format.setParseBigDecimal(true);
 
+            final String source = cleanUpAmount(row.getCellByIndex(1).getStringValue());
+            final var amount = new BigDecimal(format.parse(source).toString());
+            if (BigDecimal.ZERO.equals(amount) || source.isEmpty() || "0,00".equals(source)) {
+                log.debug("Amount is zero - skipping entry.");
+                return Optional.empty();
+            }
+
             var bilanzRow = BilanzRow.builder() //
                     // remove trailing spaces and currency symbol
-                    .amount(new BigDecimal(format.parse(cleanUpAmount(row.getCellByIndex(1).getStringValue())).toString())) //
+                    .amount(amount) //
                     .description(row.getCellByIndex(2).getStringValue()) //
                     .shop(row.getCellByIndex(3).getStringValue()) //
                     .payment(row.getCellByIndex(4).getStringValue()) //
@@ -51,7 +58,6 @@ public final class BilanzRowParser {
             return "null";
         }
         return "[" + row.getCellByIndex(0).getStringValue() + ", " + row.getCellByIndex(1).getStringValue() + ", " + row.getCellByIndex(2).getStringValue() + ", " + row.getCellByIndex(3).getStringValue() + ", " + row.getCellByIndex(4).getStringValue() + ", " + row.getCellByIndex(5).getStringValue() + "]";
-
     }
 
     /**

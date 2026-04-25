@@ -23,7 +23,7 @@ class BilanzOdsReaderTest {
         assertThat(reader.getSource()).hasFileName("example-ausgaben.ods");
         assertThat(reader.getTableName()).isEqualTo("Ausgaben");
 
-        assertThat(reader.extractData().rows()).hasSize(152);
+        assertThat(reader.extractData().rows()).hasSize(140);
     }
 
     @Test

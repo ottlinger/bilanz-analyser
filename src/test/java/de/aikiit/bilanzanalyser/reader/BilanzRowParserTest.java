@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class BilanzRowParserTest {
 
-    private static OdfTableRow createExampleRow(String dateValue) throws Exception {
+    private static OdfTableRow createExampleRow(String dateValue, boolean withAmount) throws Exception {
         try (OdfDocument document = OdfSpreadsheetDocument.newSpreadsheetDocument()) {
             OdfTable t = OdfTable.newTable(document, 5, 6);
             t.setTableName("Ausgaben");
@@ -30,7 +30,11 @@ class BilanzRowParserTest {
             }
 
             newRow.getCellByIndex(0).setStringValue(dateValue);
-            newRow.getCellByIndex(1).setStringValue("12.000,34 €");
+            if (withAmount) {
+                newRow.getCellByIndex(1).setStringValue("12.000,34 €");
+            } else {
+                newRow.getCellByIndex(1).setStringValue("0,00 €");
+            }
             newRow.getCellByIndex(2).setStringValue("Just a test row");
             newRow.getCellByIndex(3).setStringValue("ReWe");
             newRow.getCellByIndex(4).setStringValue("EC");
@@ -42,7 +46,7 @@ class BilanzRowParserTest {
     @Test
     void fromOdfTableRowNPESafe() throws Exception {
         assertThat(fromOdfTableRow(null)).isEmpty();
-        assertThat(fromOdfTableRow(createExampleRow("2025-10-02"))).isPresent().contains(BilanzRow.builder() //
+        assertThat(fromOdfTableRow(createExampleRow("2025-10-02", true))).isPresent().contains(BilanzRow.builder() //
                 .date(LocalDate.parse("2025-10-02")) //
                 .amount(new BigDecimal("12000.34")) //
                 .description("Just a test row") //
@@ -50,9 +54,14 @@ class BilanzRowParserTest {
     }
 
     @Test
+    void fromOdfTableRowWithOutAmountIsSkipped() throws Exception {
+        assertThat(fromOdfTableRow(createExampleRow("1969-07-02", false))).isEmpty();
+    }
+
+    @Test
     void fromOdfTableRowSpecialDateHandlingMappedToDefault() throws Exception {
         for (String date : new String[]{null, "?", " ?  ", " "}) {
-            assertThat(fromOdfTableRow(createExampleRow(date))).isPresent().contains(BilanzRow.builder() //
+            assertThat(fromOdfTableRow(createExampleRow(date, true))).isPresent().contains(BilanzRow.builder() //
                     .date(BilanzRow.FALLBACK_DATE) //
                     .amount(new BigDecimal("12000.34")) //
                     .description("Just a test row") //
