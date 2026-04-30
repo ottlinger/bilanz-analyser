@@ -11,4 +11,4 @@ ba-web-app,de.aikiit.bilanzanalyser.reader,BilanzOdsReader,55,128,5,9,14,30,4,7,
 ba-web-app,de.aikiit.bilanzanalyser.reader,BilanzRowParserStatistic,8,28,5,1,0,3,3,3,0,3
 ba-web-app,de.aikiit.bilanzanalyser.api,DataItem,0,9,0,0,0,1,0,1,0,1
 ba-web-app,de.aikiit.bilanzanalyser.api,DataController,0,55,0,0,0,12,0,2,0,2
-ba-web-app,de.aikiit.bilanzanalyser.analyse,AnalyseController,2,3,0,0,1,1,1,1,1,1
+ba-web-app,de.aikiit.bilanzanalyser.analyse,AnalyseController,7,3,0,0,2,1,1,1,1,1

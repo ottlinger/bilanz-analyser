@@ -2,12 +2,16 @@
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 @RestController
-<span class="fc" id="L7">public final class AnalyseController {</span>
+<span class="fc" id="L8">public final class AnalyseController {</span>
     @GetMapping(&quot;/analyse&quot;)
-    public String analyse() {
-<span class="nc" id="L10">        return &quot;Ready to analyse!&quot;;</span>
+    public ModelAndView analyse() {
+<span class="nc" id="L11">        ModelAndView mav = new ModelAndView(&quot;analyse&quot;);</span>
+        // mav.addObject(&quot;worksheets&quot;, sourceService.getSources());
+<span class="nc" id="L13">        return mav;</span>
     }
+
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
