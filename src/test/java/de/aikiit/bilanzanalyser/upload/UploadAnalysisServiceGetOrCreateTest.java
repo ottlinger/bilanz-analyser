@@ -1,5 +1,6 @@
 package de.aikiit.bilanzanalyser.upload;
 
+import de.aikiit.bilanzanalyser.entity.database.CategoryEntity;
 import de.aikiit.bilanzanalyser.entity.database.PaymentEntity;
 import de.aikiit.bilanzanalyser.entity.database.ShopEntity;
 import de.aikiit.bilanzanalyser.entity.database.repository.BilanzRowRepository;
@@ -92,6 +93,34 @@ class UploadAnalysisServiceGetOrCreateTest {
 
         assertThat(result.getName()).isEqualTo("MyNewShop");
         verify(shopRepository).save(any());
+    }
+
+    @Test
+    void getOrCreateCategory_shouldReturnExisting() {
+        CategoryEntity existing = new CategoryEntity();
+        existing.setName("OurCategory");
+
+        when(categoryRepository.findByName("OurCategory")).thenReturn(Optional.of(existing));
+
+        CategoryEntity result = service.getOrCreateCategory("OurCategory");
+
+        assertSame(existing, result);
+        verify(categoryRepository, never()).save(any());
+    }
+
+    @Test
+    void getOrCreateCategory_shouldCreateNew() {
+        when(categoryRepository.findByName("MyNewCat")).thenReturn(Optional.empty());
+
+        CategoryEntity saved = new CategoryEntity();
+        saved.setName("MyNewCat");
+
+        when(categoryRepository.save(any())).thenReturn(saved);
+
+        CategoryEntity result = service.getOrCreateCategory("MyNewCat");
+
+        assertThat(result.getName()).isEqualTo("MyNewCat");
+        verify(categoryRepository).save(any());
     }
 
 }
