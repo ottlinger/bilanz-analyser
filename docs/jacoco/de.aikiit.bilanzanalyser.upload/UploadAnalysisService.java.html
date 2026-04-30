@@ -140,9 +140,9 @@ public class UploadAnalysisService {
     @Transactional
     SourceEntity getOrCreateSource(String name) {
 <span class="fc" id="L142">        return getOrCreate(name, sourceRepository::findByName, n -&gt; {</span>
-<span class="nc" id="L143">            SourceEntity e = new SourceEntity();</span>
-<span class="nc" id="L144">            e.setName(n); // no replaceIfEmpty here before, but now consistent</span>
-<span class="nc" id="L145">            return sourceRepository.save(e);</span>
+<span class="fc" id="L143">            SourceEntity e = new SourceEntity();</span>
+<span class="fc" id="L144">            e.setName(n); // no replaceIfEmpty here before, but now consistent</span>
+<span class="fc" id="L145">            return sourceRepository.save(e);</span>
         });
     }
 
