@@ -9,44 +9,57 @@
     <title>Analyse</title>
 </head>
 <body>
-<div class="container mt-0">
-    <h2>Analyse database contents</h2>
+<main>
+    <div class="container mt-0">
+        <h2>Analyse database contents</h2>
+        <p>
+            Return to <a th:href="@{/}"><i class="bi bi-pencil-square"></i> Startpage</a> to upload data
+        </p>
 
-    <div class="container mt-5">
-        <h2 class="mb-4">Resultate</h2>
+        <div class="container mt-5">
+            <h2 class="mb-4">Resultate</h2>
 
-        <div id="mainChart" style="width: 600px;height:400px;"></div>
+            <div id="mainChart" style="width: 600px;height:400px;"></div>
 
-        <script type="text/javascript">
-            var chartDom = document.getElementById('mainChart');
-            var myChart = echarts.init(chartDom);
-            var option;
+        </div>
+    </div>
+</main>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/axios/axios.min.js}"></script>
+<script type="text/javascript">
+    axios.get("/api/categories")
+        .then(response => {
+            const data = response.data;
 
-            option = {
+            const products = data.map(item => item.name);
+            const amounts = data.map(item => item.id);
+
+            const chart = echarts.init(document.getElementById('mainChart'));
+
+            const option = {
                 title: {
-                    text: 'ECharts Example'
+                    text: 'Sales Data'
                 },
                 tooltip: {},
-                legend: {
-                    data: ['sales']
-                },
                 xAxis: {
-                    data: ['Shirts', 'Cardigans', 'Chiffons', 'Pants', 'Heels', 'Socks']
+                    type: 'category',
+                    data: products
                 },
-                yAxis: {},
-                series: [
-                    {
-                        name: 'sales',
-                        type: 'bar',
-                        data: [5, 20, 36, 10, 10, 20]
-                    }
-                ]
+                yAxis: {
+                    type: 'value'
+                },
+                series: [{
+                    name: 'Amount',
+                    type: 'bar',
+                    data: amounts
+                }]
             };
 
-            option && myChart.setOption(option);
-        </script>
-    </div>
-</div>
-<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+            chart.setOption(option);
+        })
+        .catch(error => {
+            console.error("Error loading data:", error);
+        });
+</script>
 </body>
 </html>
