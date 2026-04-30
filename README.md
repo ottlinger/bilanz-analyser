@@ -32,11 +32,18 @@ and copy all stuff from
 *node_modules/bootstrap/dist*
 into the application base folder.
 
+## ECharts
+
+The ASF project ECharts recommends to download via:
+* https://www.jsdelivr.com/package/npm/echarts
+* put in *src/main/resources/static*
+
 ## Bootstrap icon integration
 
 * https://icons.getbootstrap.com/
 * download ZIP
 * put all files from the zip into [src/main/resources/static/css/icons/](./src/main/resources/static/css/icons/)
+* <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 * Find an icon via: https://icons.getbootstrap.com/?q=file
 
 ## Favicon
