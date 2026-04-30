@@ -54,6 +54,7 @@
                     <a th:href="@{/analyse}">
                         <button class="btn btn-outline-secondary" type="button">Analyse starten</button>
                     </a>
+                    <div id="mainChart" style="width: 600px;height:400px;"></div>
                 </div>
             </div>
         </div>
@@ -63,6 +64,7 @@
         </footer>
     </div>
 </main>
+<script th:src="@{/js/echarts/echarts.min.js}"></script>
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/axios/axios.min.js}"></script>
 <script>
@@ -89,6 +91,45 @@
     }
 
     window.onload = loadDataItems;
+
+    // load graph
+    const data = response.data;
+
+    const products = data.map(item => item.name);
+    const amounts = data.map(item => item.id);
+    var chartDom = document.getElementById('mainChart');
+    var myChart = echarts.init(chartDom);
+    var option;
+    option = {
+        tooltip: {
+            trigger: 'item'
+        },
+        legend: {
+            top: '5%',
+            left: 'center'
+        },
+        series: [
+            {
+                name: 'Database entries',
+                type: 'pie',
+                radius: ['40%', '70%'],
+                center: ['50%', '70%'],
+                // adjust the start and end angle
+                startAngle: 180,
+                endAngle: 360,
+                data: [
+                    { value: 1048, name: 'Search Engine' },
+                    { value: 735, name: 'Direct' },
+                    { value: 580, name: 'Email' },
+                    { value: 484, name: 'Union Ads' },
+                    { value: 300, name: 'Video Ads' }
+                ]
+            }
+        ]
+    };
+
+    option && myChart.setOption(option);
+
 </script>
 </body>
 </html>
