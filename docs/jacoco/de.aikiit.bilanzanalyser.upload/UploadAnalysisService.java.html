@@ -113,9 +113,9 @@ public class UploadAnalysisService {
     @Transactional
     ShopEntity getOrCreateShop(String name) {
 <span class="fc" id="L115">        return getOrCreate(name, shopRepository::findByName, n -&gt; {</span>
-<span class="nc" id="L116">            ShopEntity e = new ShopEntity();</span>
-<span class="nc" id="L117">            e.setName(n);</span>
-<span class="nc" id="L118">            return shopRepository.save(e);</span>
+<span class="fc" id="L116">            ShopEntity e = new ShopEntity();</span>
+<span class="fc" id="L117">            e.setName(n);</span>
+<span class="fc" id="L118">            return shopRepository.save(e);</span>
         });
     }
 
@@ -131,9 +131,9 @@ public class UploadAnalysisService {
     @Transactional
     CategoryEntity getOrCreateCategory(String name) {
 <span class="fc" id="L133">        return getOrCreate(name, categoryRepository::findByName, n -&gt; {</span>
-<span class="nc" id="L134">            CategoryEntity e = new CategoryEntity();</span>
-<span class="nc" id="L135">            e.setName(n);</span>
-<span class="nc" id="L136">            return categoryRepository.save(e);</span>
+<span class="fc" id="L134">            CategoryEntity e = new CategoryEntity();</span>
+<span class="fc" id="L135">            e.setName(n);</span>
+<span class="fc" id="L136">            return categoryRepository.save(e);</span>
         });
     }
 

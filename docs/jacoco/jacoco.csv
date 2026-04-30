@@ -2,7 +2,7 @@ GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_
 ba-web-app,de.aikiit.bilanzanalyser.entity,BilanzRow,0,6,0,0,0,1,0,1,0,1
 ba-web-app,de.aikiit.bilanzanalyser,WebAppApplication,5,3,0,0,2,1,1,1,1,1
 ba-web-app,de.aikiit.bilanzanalyser.entity.database,DataInitializer,0,76,0,4,0,15,0,7,0,5
-ba-web-app,de.aikiit.bilanzanalyser.upload,UploadAnalysisService,48,196,0,6,11,36,4,14,4,11
+ba-web-app,de.aikiit.bilanzanalyser.upload,UploadAnalysisService,22,222,0,6,5,42,2,16,2,13
 ba-web-app,de.aikiit.bilanzanalyser.upload,UploadController,0,155,0,6,0,36,0,7,0,4
 ba-web-app,de.aikiit.bilanzanalyser.upload,SourceService,0,10,0,0,0,4,0,2,0,2
 ba-web-app,de.aikiit.bilanzanalyser.reader,BilanzRowParserResult,4,88,4,4,0,11,3,8,0,7
