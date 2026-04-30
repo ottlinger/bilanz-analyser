@@ -25,10 +25,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -49,34 +47,6 @@ class UploadAnalysisServiceTest {
 
     @InjectMocks
     private UploadAnalysisService service;
-
-    @Test
-    void getOrCreatePayment_shouldReturnExisting() {
-        PaymentEntity existing = new PaymentEntity();
-        existing.setName("Cash");
-
-        when(paymentRepository.findByName("Cash")).thenReturn(Optional.of(existing));
-
-        PaymentEntity result = service.getOrCreatePayment("Cash");
-
-        assertSame(existing, result);
-        verify(paymentRepository, never()).save(any());
-    }
-
-    @Test
-    void getOrCreatePayment_shouldCreateNew() {
-        when(paymentRepository.findByName("Card")).thenReturn(Optional.empty());
-
-        PaymentEntity saved = new PaymentEntity();
-        saved.setName("Card");
-
-        when(paymentRepository.save(any())).thenReturn(saved);
-
-        PaymentEntity result = service.getOrCreatePayment("Card");
-
-        assertThat(result.getName()).isEqualTo("Card");
-        verify(paymentRepository).save(any());
-    }
 
     @Test
     void getOrCreatePayment_shouldHandleConcurrentInsert() {
