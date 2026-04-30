@@ -3,6 +3,7 @@ package de.aikiit.bilanzanalyser.upload;
 import de.aikiit.bilanzanalyser.entity.database.CategoryEntity;
 import de.aikiit.bilanzanalyser.entity.database.PaymentEntity;
 import de.aikiit.bilanzanalyser.entity.database.ShopEntity;
+import de.aikiit.bilanzanalyser.entity.database.SourceEntity;
 import de.aikiit.bilanzanalyser.entity.database.repository.BilanzRowRepository;
 import de.aikiit.bilanzanalyser.entity.database.repository.CategoryRepository;
 import de.aikiit.bilanzanalyser.entity.database.repository.PaymentRepository;
@@ -121,6 +122,34 @@ class UploadAnalysisServiceGetOrCreateTest {
 
         assertThat(result.getName()).isEqualTo("MyNewCat");
         verify(categoryRepository).save(any());
+    }
+
+    @Test
+    void getOrCreateSource_shouldReturnExisting() {
+        SourceEntity existing = new SourceEntity();
+        existing.setName("Ours");
+
+        when(sourceRepository.findByName("Ours")).thenReturn(Optional.of(existing));
+
+        SourceEntity result = service.getOrCreateSource("Ours");
+
+        assertSame(existing, result);
+        verify(sourceRepository, never()).save(any());
+    }
+
+    @Test
+    void getOrCreateSource_shouldCreateNew() {
+        when(sourceRepository.findByName("Theirs")).thenReturn(Optional.empty());
+
+        SourceEntity saved = new SourceEntity();
+        saved.setName("Theirs");
+
+        when(sourceRepository.save(any())).thenReturn(saved);
+
+        SourceEntity result = service.getOrCreateSource("Theirs");
+
+        assertThat(result.getName()).isEqualTo("Theirs");
+        verify(sourceRepository).save(any());
     }
 
 }
