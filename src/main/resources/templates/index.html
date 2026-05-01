@@ -93,10 +93,51 @@
     window.onload = loadDataItems;
 
     // load graph
+    axios.get("/api/dataitems")
+        .then(response => {
+            const data = response.data;
+
+            const products = data.map(item => item.name);
+            const amounts = data.map(item => item.amount);
+
+            const chart = echarts.init(document.getElementById('mainChart'));
+
+            let option;
+            option = {
+                tooltip: {
+                    trigger: 'item'
+                },
+                legend: {
+                    top: '5%',
+                    left: 'center'
+                },
+                series: [
+                    {
+                        name: 'Database entries',
+                        type: 'pie',
+                        radius: ['40%', '70%'],
+                        center: ['50%', '70%'],
+                        // adjust the start and end angle
+                        startAngle: 180,
+                        endAngle: 360,
+                        data: data
+                    }
+                ]
+            };
+
+            option && chart.setOption(option);
+        })
+        .catch(error => {
+            console.error("Error loading data for graph:", error);
+        });
+
+    // load graph
+    /*
+    const response = axios.get('/api/dataitems');
     const data = response.data;
 
     const products = data.map(item => item.name);
-    const amounts = data.map(item => item.id);
+    const amounts = data.map(item => item.value);
     var chartDom = document.getElementById('mainChart');
     var myChart = echarts.init(chartDom);
     var option;
@@ -129,7 +170,7 @@
     };
 
     option && myChart.setOption(option);
-
+*/
 </script>
 </body>
 </html>
