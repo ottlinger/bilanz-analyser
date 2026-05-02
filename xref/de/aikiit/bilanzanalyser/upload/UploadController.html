@@ -37,7 +37,7 @@
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>      @Value(<span class="jxr_string">"${java.io.tmpdir}"</span>)
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>      <strong class="jxr_keyword">private</strong> String tempDir;
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>      <strong class="jxr_keyword">public</strong> <a name="UploadController" href="../../../../de/aikiit/bilanzanalyser/upload/UploadController.html#UploadController">UploadController</a>(<a name="UploadAnalysisService" href="../../../../de/aikiit/bilanzanalyser/upload/UploadAnalysisService.html#UploadAnalysisService">UploadAnalysisService</a> uploadAnalysisService, <a name="SourceService" href="../../../../de/aikiit/bilanzanalyser/upload/SourceService.html#SourceService">SourceService</a> sourceService) {
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>      <strong class="jxr_keyword">public</strong> <a name="UploadController" href="../../../../de/aikiit/bilanzanalyser/upload/UploadController.html#UploadController">UploadController</a>(<strong class="jxr_keyword">final</strong> <a name="UploadAnalysisService" href="../../../../de/aikiit/bilanzanalyser/upload/UploadAnalysisService.html#UploadAnalysisService">UploadAnalysisService</a> uploadAnalysisService, <strong class="jxr_keyword">final</strong> <a name="SourceService" href="../../../../de/aikiit/bilanzanalyser/upload/SourceService.html#SourceService">SourceService</a> sourceService) {
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>          <strong class="jxr_keyword">this</strong>.uploadAnalysisService = uploadAnalysisService;
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>          <strong class="jxr_keyword">this</strong>.sourceService = sourceService;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>      }
@@ -51,7 +51,7 @@
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>      }
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>  
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>      @PostMapping(<span class="jxr_string">"/upload"</span>)
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>      <strong class="jxr_keyword">public</strong> ModelAndView handleFileUpload(@RequestParam(<span class="jxr_string">"file"</span>) MultipartFile file, @RequestParam(<span class="jxr_string">"selectedWorksheet"</span>) String selectedWorksheet) {
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>      <strong class="jxr_keyword">public</strong> ModelAndView handleFileUpload(@RequestParam(<span class="jxr_string">"file"</span>) <strong class="jxr_keyword">final</strong> MultipartFile file, @RequestParam(<span class="jxr_string">"selectedWorksheet"</span>) <strong class="jxr_keyword">final</strong> String selectedWorksheet) {
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>  
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>          <em class="jxr_comment">// Create ModelAndView for the "upload" view</em>
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>          ModelAndView mav = <strong class="jxr_keyword">new</strong> ModelAndView(<span class="jxr_string">"upload"</span>);

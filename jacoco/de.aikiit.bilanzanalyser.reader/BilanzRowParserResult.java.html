@@ -54,7 +54,7 @@ public record BilanzRowParserResult(int errorCount, int rowCount, List&lt;Bilanz
      * @param newRows a list of rows to replace any existing rows.
      * @return copy with added row.
      */
-    public BilanzRowParserResult withRows(List&lt;BilanzRow&gt; newRows) {
+    public BilanzRowParserResult withRows(final List&lt;BilanzRow&gt; newRows) {
 <span class="fc" id="L58">        return new BilanzRowParserResult(errorCount, rowCount, newRows);</span>
     }
 
@@ -64,7 +64,7 @@ public record BilanzRowParserResult(int errorCount, int rowCount, List&lt;Bilanz
      * @param row a single row.
      * @return copy with added row.
      */
-    public BilanzRowParserResult addRow(BilanzRow row) {
+    public BilanzRowParserResult addRow(final BilanzRow row) {
 <span class="fc" id="L68">        var newList = new java.util.ArrayList&lt;&gt;(rows);</span>
 <span class="fc" id="L69">        newList.add(row);</span>
 <span class="fc" id="L70">        return new BilanzRowParserResult(errorCount, rowCount, newList);</span>
