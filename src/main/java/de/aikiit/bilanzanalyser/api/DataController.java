@@ -20,7 +20,7 @@ public final class DataController {
     private final ShopRepository shopRepository;
     private final SourceRepository sourceRepository;
 
-    public DataController(BilanzRowRepository bilanzRowRepository, CategoryRepository categoryRepository, PaymentRepository paymentRepository, ShopRepository shopRepository, SourceRepository sourceRepository) {
+    public DataController(final BilanzRowRepository bilanzRowRepository, final CategoryRepository categoryRepository, final PaymentRepository paymentRepository, final ShopRepository shopRepository, final SourceRepository sourceRepository) {
         this.bilanzRowRepository = bilanzRowRepository;
         this.categoryRepository = categoryRepository;
         this.paymentRepository = paymentRepository;

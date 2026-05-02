@@ -15,7 +15,7 @@ import java.util.List;
 public final class AnalyseController {
     private final CategoryRepository categoryRepository;
 
-    public AnalyseController(CategoryRepository categoryRepository) {
+    public AnalyseController(final CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
     }
 

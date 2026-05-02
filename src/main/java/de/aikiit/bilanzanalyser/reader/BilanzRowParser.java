@@ -66,7 +66,7 @@ public final class BilanzRowParser {
      * @param amount given amount, e.g. 1,23 €
      * @return trimmed amount in order to be parseable as a numeric.
      */
-    static String cleanUpAmount(String amount) {
+    static String cleanUpAmount(final String amount) {
         if (amount != null && !amount.isEmpty()) {
             return amount.replace("€", "").trim();
         }

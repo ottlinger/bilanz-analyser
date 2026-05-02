@@ -27,24 +27,6 @@ public final class BilanzOdsReader {
     private String tableName;
     private Path source;
 
-    public static void main(final String[] args) {
-        try (OdfSpreadsheetDocument document = OdfSpreadsheetDocument.loadDocument(new File("/tmp/example.ods"))) {
-            OdfTable table = document.getTableByName("Ausgaben");
-            log.info("{} lines to read", table.getRowCount());
-
-            for (int row = 0; row < 10 /*table.getRowCount() */; row++) {
-                for (int col = 0; col < table.getColumnCount(); col++) {
-                    OdfTableCell cell = table.getCellByPosition(col, row);
-                    System.out.print(cell.getStringValue() + "\t");
-                }
-                System.out.println();
-            }
-
-        } catch (Exception e) {
-            log.error(e);
-        }
-    }
-
     /**
      * Parses the given tableName in the configured ODS file.
      *
