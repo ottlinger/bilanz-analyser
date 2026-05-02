@@ -10,7 +10,7 @@ public final class SourceService {
 
     private final SourceRepository sourceRepository;
 
-    public SourceService(SourceRepository sourceRepository) {
+    public SourceService(final SourceRepository sourceRepository) {
         this.sourceRepository = sourceRepository;
     }
 

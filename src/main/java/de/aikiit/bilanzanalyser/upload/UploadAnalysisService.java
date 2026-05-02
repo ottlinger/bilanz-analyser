@@ -33,7 +33,7 @@ public class UploadAnalysisService {
     private final CategoryRepository categoryRepository;
     private final SourceRepository sourceRepository;
 
-    public UploadAnalysisService(BilanzRowRepository bilanzRowRepository, ShopRepository shopRepository, PaymentRepository paymentRepository, CategoryRepository categoryRepository, SourceRepository sourceRepository) {
+    public UploadAnalysisService(final BilanzRowRepository bilanzRowRepository, final ShopRepository shopRepository, final PaymentRepository paymentRepository, final CategoryRepository categoryRepository, final SourceRepository sourceRepository) {
         this.bilanzRowRepository = bilanzRowRepository;
         this.shopRepository = shopRepository;
         this.paymentRepository = paymentRepository;
@@ -49,14 +49,14 @@ public class UploadAnalysisService {
      * @return result container.
      * @throws IOException in case of I/O problems.
      */
-    BilanzRowParserResult processFile(String worksheetName, Path spreadsheet) throws IOException {
+    BilanzRowParserResult processFile(final String worksheetName, final Path spreadsheet) throws IOException {
         BilanzOdsReader reader = new BilanzOdsReader(worksheetName, spreadsheet);
         return reader.extractData();
     }
 
     @Async
     @Transactional
-    public void flushDataIntoDatabase(BilanzRowParserResult data) {
+    public void flushDataIntoDatabase(final BilanzRowParserResult data) {
         long start = System.nanoTime();
         log.info("Starting to flush data into database...");
 
@@ -97,7 +97,7 @@ public class UploadAnalysisService {
      * @return an existing or newly created entity corresponding to the given name.
      */
     @Transactional
-    <T> T getOrCreate(String rawName, Function<String, Optional<T>> finder, Function<String, T> creator) {
+    <T> T getOrCreate(final String rawName, final Function<String, Optional<T>> finder, final Function<String, T> creator) {
         String name = replaceIfEmpty(rawName);
 
         return finder.apply(name).orElseGet(() -> {
@@ -111,7 +111,7 @@ public class UploadAnalysisService {
     }
 
     @Transactional
-    ShopEntity getOrCreateShop(String name) {
+    ShopEntity getOrCreateShop(final String name) {
         return getOrCreate(name, shopRepository::findByName, n -> {
             ShopEntity e = new ShopEntity();
             e.setName(n);
@@ -120,7 +120,7 @@ public class UploadAnalysisService {
     }
 
     @Transactional
-    PaymentEntity getOrCreatePayment(String name) {
+    PaymentEntity getOrCreatePayment(final String name) {
         return getOrCreate(name, paymentRepository::findByName, n -> {
             PaymentEntity e = new PaymentEntity();
             e.setName(n);
@@ -129,7 +129,7 @@ public class UploadAnalysisService {
     }
 
     @Transactional
-    CategoryEntity getOrCreateCategory(String name) {
+    CategoryEntity getOrCreateCategory(final String name) {
         return getOrCreate(name, categoryRepository::findByName, n -> {
             CategoryEntity e = new CategoryEntity();
             e.setName(n);
@@ -138,7 +138,7 @@ public class UploadAnalysisService {
     }
 
     @Transactional
-    SourceEntity getOrCreateSource(String name) {
+    SourceEntity getOrCreateSource(final String name) {
         return getOrCreate(name, sourceRepository::findByName, n -> {
             SourceEntity e = new SourceEntity();
             e.setName(n); // no replaceIfEmpty here before, but now consistent
@@ -146,7 +146,7 @@ public class UploadAnalysisService {
         });
     }
 
-    String replaceIfEmpty(String value) {
+    String replaceIfEmpty(final String value) {
         return value == null || value.isBlank() ? "<empty>" : value.trim();
     }
 

@@ -29,7 +29,7 @@ public final class UploadController {
     @Value("${java.io.tmpdir}")
     private String tempDir;
 
-    public UploadController(UploadAnalysisService uploadAnalysisService, SourceService sourceService) {
+    public UploadController(final UploadAnalysisService uploadAnalysisService, final SourceService sourceService) {
         this.uploadAnalysisService = uploadAnalysisService;
         this.sourceService = sourceService;
     }
@@ -43,7 +43,7 @@ public final class UploadController {
     }
 
     @PostMapping("/upload")
-    public ModelAndView handleFileUpload(@RequestParam("file") MultipartFile file, @RequestParam("selectedWorksheet") String selectedWorksheet) {
+    public ModelAndView handleFileUpload(@RequestParam("file") final MultipartFile file, @RequestParam("selectedWorksheet") final String selectedWorksheet) {
 
         // Create ModelAndView for the "upload" view
         ModelAndView mav = new ModelAndView("upload");
