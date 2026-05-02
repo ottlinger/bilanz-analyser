@@ -33,7 +33,7 @@ public class UploadAnalysisService {
     private final CategoryRepository categoryRepository;
     private final SourceRepository sourceRepository;
 
-<span class="fc" id="L36">    public UploadAnalysisService(BilanzRowRepository bilanzRowRepository, ShopRepository shopRepository, PaymentRepository paymentRepository, CategoryRepository categoryRepository, SourceRepository sourceRepository) {</span>
+<span class="fc" id="L36">    public UploadAnalysisService(final BilanzRowRepository bilanzRowRepository, final ShopRepository shopRepository, final PaymentRepository paymentRepository, final CategoryRepository categoryRepository, final SourceRepository sourceRepository) {</span>
 <span class="fc" id="L37">        this.bilanzRowRepository = bilanzRowRepository;</span>
 <span class="fc" id="L38">        this.shopRepository = shopRepository;</span>
 <span class="fc" id="L39">        this.paymentRepository = paymentRepository;</span>
@@ -49,14 +49,14 @@ public class UploadAnalysisService {
      * @return result container.
      * @throws IOException in case of I/O problems.
      */
-    BilanzRowParserResult processFile(String worksheetName, Path spreadsheet) throws IOException {
+    BilanzRowParserResult processFile(final String worksheetName, final Path spreadsheet) throws IOException {
 <span class="nc" id="L53">        BilanzOdsReader reader = new BilanzOdsReader(worksheetName, spreadsheet);</span>
 <span class="nc" id="L54">        return reader.extractData();</span>
     }
 
     @Async
     @Transactional
-    public void flushDataIntoDatabase(BilanzRowParserResult data) {
+    public void flushDataIntoDatabase(final BilanzRowParserResult data) {
 <span class="fc" id="L60">        long start = System.nanoTime();</span>
 <span class="fc" id="L61">        log.info(&quot;Starting to flush data into database...&quot;);</span>
 
@@ -97,7 +97,7 @@ public class UploadAnalysisService {
      * @return an existing or newly created entity corresponding to the given name.
      */
     @Transactional
-    &lt;T&gt; T getOrCreate(String rawName, Function&lt;String, Optional&lt;T&gt;&gt; finder, Function&lt;String, T&gt; creator) {
+    &lt;T&gt; T getOrCreate(final String rawName, final Function&lt;String, Optional&lt;T&gt;&gt; finder, final Function&lt;String, T&gt; creator) {
 <span class="fc" id="L101">        String name = replaceIfEmpty(rawName);</span>
 
 <span class="fc" id="L103">        return finder.apply(name).orElseGet(() -&gt; {</span>
@@ -111,7 +111,7 @@ public class UploadAnalysisService {
     }
 
     @Transactional
-    ShopEntity getOrCreateShop(String name) {
+    ShopEntity getOrCreateShop(final String name) {
 <span class="fc" id="L115">        return getOrCreate(name, shopRepository::findByName, n -&gt; {</span>
 <span class="fc" id="L116">            ShopEntity e = new ShopEntity();</span>
 <span class="fc" id="L117">            e.setName(n);</span>
@@ -120,7 +120,7 @@ public class UploadAnalysisService {
     }
 
     @Transactional
-    PaymentEntity getOrCreatePayment(String name) {
+    PaymentEntity getOrCreatePayment(final String name) {
 <span class="fc" id="L124">        return getOrCreate(name, paymentRepository::findByName, n -&gt; {</span>
 <span class="fc" id="L125">            PaymentEntity e = new PaymentEntity();</span>
 <span class="fc" id="L126">            e.setName(n);</span>
@@ -129,7 +129,7 @@ public class UploadAnalysisService {
     }
 
     @Transactional
-    CategoryEntity getOrCreateCategory(String name) {
+    CategoryEntity getOrCreateCategory(final String name) {
 <span class="fc" id="L133">        return getOrCreate(name, categoryRepository::findByName, n -&gt; {</span>
 <span class="fc" id="L134">            CategoryEntity e = new CategoryEntity();</span>
 <span class="fc" id="L135">            e.setName(n);</span>
@@ -138,7 +138,7 @@ public class UploadAnalysisService {
     }
 
     @Transactional
-    SourceEntity getOrCreateSource(String name) {
+    SourceEntity getOrCreateSource(final String name) {
 <span class="fc" id="L142">        return getOrCreate(name, sourceRepository::findByName, n -&gt; {</span>
 <span class="fc" id="L143">            SourceEntity e = new SourceEntity();</span>
 <span class="fc" id="L144">            e.setName(n); // no replaceIfEmpty here before, but now consistent</span>
@@ -146,7 +146,7 @@ public class UploadAnalysisService {
         });
     }
 
-    String replaceIfEmpty(String value) {
+    String replaceIfEmpty(final String value) {
 <span class="fc bfc" id="L150" title="All 4 branches covered.">        return value == null || value.isBlank() ? &quot;&lt;empty&gt;&quot; : value.trim();</span>
     }
 

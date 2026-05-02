@@ -8,11 +8,11 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
-@Configuration
+@Configuration // must not be final
 <span class="fc" id="L12">public class DataInitializer {</span>
 
     @Bean
-    CommandLineRunner initData(PaymentRepository paymentRepository, SourceRepository sourceRepository) {
+    CommandLineRunner initData(final PaymentRepository paymentRepository, final SourceRepository sourceRepository) {
 <span class="fc" id="L16">        return args -&gt; {</span>
 
             // payment categories

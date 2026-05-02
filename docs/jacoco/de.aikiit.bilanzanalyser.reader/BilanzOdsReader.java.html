@@ -27,24 +27,6 @@ public final class BilanzOdsReader {
     private String tableName;
     private Path source;
 
-    public static void main(final String[] args) {
-<span class="nc" id="L31">        try (OdfSpreadsheetDocument document = OdfSpreadsheetDocument.loadDocument(new File(&quot;/tmp/example.ods&quot;))) {</span>
-<span class="nc" id="L32">            OdfTable table = document.getTableByName(&quot;Ausgaben&quot;);</span>
-<span class="nc" id="L33">            log.info(&quot;{} lines to read&quot;, table.getRowCount());</span>
-
-<span class="nc bnc" id="L35" title="All 2 branches missed.">            for (int row = 0; row &lt; 10 /*table.getRowCount() */; row++) {</span>
-<span class="nc bnc" id="L36" title="All 2 branches missed.">                for (int col = 0; col &lt; table.getColumnCount(); col++) {</span>
-<span class="nc" id="L37">                    OdfTableCell cell = table.getCellByPosition(col, row);</span>
-<span class="nc" id="L38">                    System.out.print(cell.getStringValue() + &quot;\t&quot;);</span>
-                }
-<span class="nc" id="L40">                System.out.println();</span>
-            }
-
-<span class="nc" id="L43">        } catch (Exception e) {</span>
-<span class="nc" id="L44">            log.error(e);</span>
-<span class="nc" id="L45">        }</span>
-<span class="nc" id="L46">    }</span>
-
     /**
      * Parses the given tableName in the configured ODS file.
      *
@@ -53,59 +35,59 @@ public final class BilanzOdsReader {
      */
     public BilanzRowParserResult extractData() throws IOException {
         try {
-<span class="fc" id="L56">            BilanzRowParserResult result = BilanzRowParserResult.empty();</span>
+<span class="fc" id="L38">            BilanzRowParserResult result = BilanzRowParserResult.empty();</span>
 
-<span class="fc" id="L58">            OdfTable table = readTable();</span>
-<span class="fc bfc" id="L59" title="All 2 branches covered.">            if (table == null) {</span>
-<span class="fc" id="L60">                return result;</span>
+<span class="fc" id="L40">            OdfTable table = readTable();</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">            if (table == null) {</span>
+<span class="fc" id="L42">                return result;</span>
             }
 
             // ODS default is 1048576 albeit it's only empty rows
-<span class="fc" id="L64">            log.info(&quot;Given table '{}' has {} rows&quot;, this.tableName, table.getRowCount());</span>
+<span class="fc" id="L46">            log.info(&quot;Given table '{}' has {} rows&quot;, this.tableName, table.getRowCount());</span>
 
-<span class="fc" id="L66">            List&lt;BilanzRow&gt; rows = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L67">            AtomicInteger counter = new AtomicInteger(0);</span>
-<span class="fc" id="L68">            AtomicInteger readRows = new AtomicInteger(0);</span>
-<span class="fc" id="L69">            AtomicInteger rowsWithParsingErrors = new AtomicInteger(0);</span>
+<span class="fc" id="L48">            List&lt;BilanzRow&gt; rows = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L49">            AtomicInteger counter = new AtomicInteger(0);</span>
+<span class="fc" id="L50">            AtomicInteger readRows = new AtomicInteger(0);</span>
+<span class="fc" id="L51">            AtomicInteger rowsWithParsingErrors = new AtomicInteger(0);</span>
 
-<span class="pc bpc" id="L71" title="1 of 2 branches missed.">            for (int rowCount = 0; rowCount &lt; table.getRowCount(); rowCount++) {</span>
-<span class="fc" id="L72">                OdfTableRow row = table.getRowByIndex(rowCount);</span>
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">            for (int rowCount = 0; rowCount &lt; table.getRowCount(); rowCount++) {</span>
+<span class="fc" id="L54">                OdfTableRow row = table.getRowByIndex(rowCount);</span>
 
                 // only allow 5 empty rows in a row
-<span class="fc bfc" id="L75" title="All 2 branches covered.">                if (counter.get() == 5) {</span>
-<span class="fc" id="L76">                    log.info(&quot;STOPPING due to too many empty lines after having read {} non-empty rows.&quot;, readRows.get());</span>
-<span class="fc" id="L77">                    break;</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">                if (counter.get() == 5) {</span>
+<span class="fc" id="L58">                    log.info(&quot;STOPPING due to too many empty lines after having read {} non-empty rows.&quot;, readRows.get());</span>
+<span class="fc" id="L59">                    break;</span>
                 }
 
-<span class="fc" id="L80">                OdfTableCell cell = row.getCellByIndex(0);</span>
-<span class="fc bfc" id="L81" title="All 2 branches covered.">                if (cell.getStringValue().isEmpty()) {</span>
-<span class="fc" id="L82">                    counter.incrementAndGet();</span>
+<span class="fc" id="L62">                OdfTableCell cell = row.getCellByIndex(0);</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">                if (cell.getStringValue().isEmpty()) {</span>
+<span class="fc" id="L64">                    counter.incrementAndGet();</span>
                     // skip empty rows
                 } else {
-<span class="fc" id="L85">                    counter.set(0);</span>
-<span class="fc" id="L86">                    readRows.incrementAndGet();</span>
-<span class="fc" id="L87">                    result = result.withRow();</span>
+<span class="fc" id="L67">                    counter.set(0);</span>
+<span class="fc" id="L68">                    readRows.incrementAndGet();</span>
+<span class="fc" id="L69">                    result = result.withRow();</span>
 
-<span class="fc" id="L89">                    Optional&lt;BilanzRow&gt; br = fromOdfTableRow(row);</span>
-<span class="fc bfc" id="L90" title="All 2 branches covered.">                    if (br.isPresent()) {</span>
-<span class="fc" id="L91">                        rows.add(br.get());</span>
+<span class="fc" id="L71">                    Optional&lt;BilanzRow&gt; br = fromOdfTableRow(row);</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">                    if (br.isPresent()) {</span>
+<span class="fc" id="L73">                        rows.add(br.get());</span>
                     } else {
-<span class="fc" id="L93">                        rowsWithParsingErrors.incrementAndGet();</span>
-<span class="fc" id="L94">                        result = result.withError();</span>
+<span class="fc" id="L75">                        rowsWithParsingErrors.incrementAndGet();</span>
+<span class="fc" id="L76">                        result = result.withError();</span>
                     }
                 }
             }
 
-<span class="fc" id="L99">            log.info(&quot;Extracted {} rows successfully, while skipping {} not well formatted rows.&quot;, rows.size(), rowsWithParsingErrors.get());</span>
-<span class="fc" id="L100">            return result.withRows(rows);</span>
-<span class="nc" id="L101">        } catch (Exception e) {</span>
-<span class="nc" id="L102">            throw new IOException(e);</span>
+<span class="fc" id="L81">            log.info(&quot;Extracted {} rows successfully, while skipping {} not well formatted rows.&quot;, rows.size(), rowsWithParsingErrors.get());</span>
+<span class="fc" id="L82">            return result.withRows(rows);</span>
+<span class="nc" id="L83">        } catch (Exception e) {</span>
+<span class="nc" id="L84">            throw new IOException(e);</span>
         }
     }
 
     private OdfTable readTable() throws Exception {
-<span class="fc" id="L107">        try (OdfSpreadsheetDocument document = OdfSpreadsheetDocument.loadDocument(source.toFile())) {</span>
-<span class="fc" id="L108">            return document.getTableByName(this.tableName);</span>
+<span class="fc" id="L89">        try (OdfSpreadsheetDocument document = OdfSpreadsheetDocument.loadDocument(source.toFile())) {</span>
+<span class="fc" id="L90">            return document.getTableByName(this.tableName);</span>
         }
     }
 }
