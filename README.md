@@ -5,7 +5,7 @@ Helper to analyze the local Bilanz
 
 [![AGPL v3.0](https://img.shields.io/github/license/ottlinger/bilanz-analyser.svg)](https://www.gnu.org/licenses/agpl-3.0.en.html)
 
-[![codecov](https://codecov.io/gh/ottlinger/bilanz-analyser/graph/badge.svg?token=JSKF2UJRRN)](https://codecov.io/gh/ottlinger/bilanz-analyser)
+[![codecov](https://codecov.io/gh/ottlinger/bilanz-analyser/branch/main/graph/badge.svg?token=JSKF2UJRRN)](https://codecov.io/gh/ottlinger/bilanz-analyser)
 
 ## Abstract
 
